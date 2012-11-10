@@ -2,22 +2,20 @@
 
 = Introduction =
 
-How to setup your Java environment:
-  * ask Mr. Flanders to install NetBeans on your computer 
-
+To setup your Java environment you will need to ask Mr. Flanders to install NetBeans on your computer
 
 = Setup for 2013 pre-season (using the 2012 toolset) =
 
-Java development environment configuration
+== Java development environment configuration ==
+Getting started with Java document - this describes the installation steps and how to create your first project. You can download it
+[http://wbrobotics.com/attachments/article/11/Getting%20Started%20with%20Java%20for%20FRC.pdf here].
 
-Getting started with Java document:
-[http://wbrobotics.com/attachments/article/11/Getting%20Started%20with%20Java%20for%20FRC.pdf here]
-After installing JDK (step 1 below, see pages 5-7)
-
-= Downloads =
+== Downloads ==
+=== Step 1 ===
 JDK 7u9 with NetBeans 7.2.1, 32 bit verison (EVEN ON 64-bit windows) [http://www.oracle.com/technetwork/java/javase/downloads/jdk-7-netbeans-download-432126.html netbeans]
 
-Install Java WPI update (NetBeans plugins) from: [http://firstforge.wpi.edu/sf/frs/do/viewSummary/projects.wpilib/frs 
+=== Step 2 ===
+Install Java WPI update (this will add the FIRST NetBeans plugins in your environment) from: [http://firstforge.wpi.edu/sf/frs/do/viewSummary/projects.wpilib/frs 
 JavaWPI]
 
-Note: just enter the XML URL into NetBeans Tools/Plugins/settings, then click check for updates and select the FRC plugins to install.
+Note: just enter the XML URL listed in the getting started document into NetBeans Tools/Plugins/settings, then click check for updates and select the FRC plugins to install.
