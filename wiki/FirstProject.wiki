@@ -11,7 +11,7 @@ To check out the most basic robot code:
   * check Scan for Netbeans Projects
   * hit Finish
   * When done, click Open Project
-  * You should see the MyFirstRobor project, expand it until you find SimpleBrain.java - this is the main source code of your robot!
+  * You should see the MyFirstRobot project, expand it until you find SimpleBrain.java - this is the main source code of your robot!
   * Now you should be able to build and deploy this project
 
 = Details =
