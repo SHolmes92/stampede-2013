@@ -1,0 +1,22 @@
+#summary Checking out the basic robot code.
+
+= Introduction =
+
+To check out the most basic robot code:
+  * start NetBeans
+  * Go to Team > Checkout...
+  * Enter http://stampede-2013.googlecode.com/svn/trunk/MyFirstRobot into Repository URL
+  * leave login and password blank
+  * hit Next
+  * check Scan for Netbeans Projects
+  * hit Finish
+  * When done, click Open Project
+  * You should see the MyFirstRobor project, expand it until you find SimpleBrain.java - this is the main source code of your robot!
+  * Now you should be able to build and deploy this project
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
