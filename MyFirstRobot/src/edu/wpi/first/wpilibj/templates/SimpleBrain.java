@@ -8,6 +8,8 @@
 package edu.wpi.first.wpilibj.templates;
 
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
 
 /**
@@ -18,6 +20,9 @@ import edu.wpi.first.wpilibj.SimpleRobot;
  * directory.
  */
 public class SimpleBrain extends SimpleRobot {
+    RobotDrive drive = new RobotDrive(1,2,3,4);
+    Joystick leftStick = new Joystick(1);
+    Joystick rightStick = new Joystick(2);
     /**
      * This function is called once each time the robot enters autonomous mode.
      */
@@ -29,6 +34,15 @@ public class SimpleBrain extends SimpleRobot {
      * This function is called once each time the robot enters operator control.
      */
     public void operatorControl() {
-
+           drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, false);
+           drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
+           drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, false);
+           drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+    
+            while (true && isOperatorControl() && isEnabled()) // loop until change 
+        {
+            drive.mecanumDrive_Cartesian(rightStick.getX(), rightStick.getY(), leftStick.getX(), (double) 0.0 );
+        }
     }
 }
+
