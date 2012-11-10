@@ -2,7 +2,7 @@
 
 = Introduction =
 
-To setup your Java environment you will need to ask Mr. Flanders to install NetBeans on your computer
+To setup your Java environment you will need to ask Mr. Flanders to install NetBeans on your computer.
 
 = Setup for 2013 pre-season (using the 2012 toolset) =
 
@@ -12,7 +12,9 @@ Getting started with Java document - this describes the installation steps and h
 
 == Downloads ==
 === Step 1 ===
-JDK 7u9 with NetBeans 7.2.1, 32 bit verison (EVEN ON 64-bit windows) [http://www.oracle.com/technetwork/java/javase/downloads/jdk-7-netbeans-download-432126.html netbeans]
+Download JDK (Java Development Kit) 
+JDK 7u9 with NetBeans 7.2.1, choose the version that fits your computer.
+** Note: on windows always choose 32-bits, even if you have a 64-bit machine) [http://www.oracle.com/technetwork/java/javase/downloads/jdk-7-netbeans-download-432126.html netbeans]
 
 === Step 2 ===
 Install Java WPI update (this will add the FIRST NetBeans plugins in your environment) from: [http://firstforge.wpi.edu/sf/frs/do/viewSummary/projects.wpilib/frs 
