@@ -140,7 +140,8 @@ public class RobotTemplate extends IterativeRobot {
         
         x = leftStick.getX();
         y = leftStick.getY();
-
+        r = rightStick.getX();
+        
         //--------------------------------------------------------------------
         //  Sonar reading
         //--------------------------------------------------------------------
@@ -162,12 +163,15 @@ public class RobotTemplate extends IterativeRobot {
             }
         }
         
-        if(false){
+        if(leftStick.getRawButton(1)){
             // lock the heading
             if(!headingLock){
                 headingLock = true;
                 heading = gyroAngle;
             }
+        }
+        else {
+            headingLock = false;
         }
         
         if(!headingLock){
