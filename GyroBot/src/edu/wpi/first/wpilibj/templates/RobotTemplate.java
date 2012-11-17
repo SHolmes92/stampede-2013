@@ -24,13 +24,12 @@ import edu.wpi.first.wpilibj.Ultrasonic;
  * directory.
  */
 public class RobotTemplate extends IterativeRobot {
-    DriverStationLCD driverStation = DriverStationLCD.getInstance();
+    DriverStationLCD driverStation;
     
-    RobotDrive drive = new RobotDrive(1, 2, 3, 4);
-    Joystick leftStick = new Joystick(1);
-    Joystick rightStick = new Joystick(2);
-    
-    Gyro gyro = new Gyro(0);
+    RobotDrive drive;
+    Joystick leftStick;
+    Joystick rightStick;
+    Gyro gyro;
     
     double gyroDrift;   // degrees per second;
     double gyroLastRdg;
@@ -50,10 +49,30 @@ public class RobotTemplate extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
+        // start!
+        driverStation = DriverStationLCD.getInstance();
         driverStation.println(DriverStationLCD.Line.kUser2, 1, "Robot booting...");
+        driverStation.updateLCD();
+        
+        System.out.println("Gyrobot booting...");
+
+        // create all objects
+        drive = new RobotDrive(1, 2, 3, 4);
+        leftStick = new Joystick(1);
+        rightStick = new Joystick(2);
+        gyro = new Gyro(1);
+
+        // note: 1 is output (marked INPUT on VEX!!!)
+        // note: 2 is input (marked OUTPUT on VEX!!!)
+        sonar = new Ultrasonic(1, 2);   
 
         // start the gyro
         gyro.reset();
+        gyro.setSensitivity(1.647 * 0.001);  // VEX gyro sensitivity (in mv/deg/sec)
+        
+        // start the sonar
+        sonar.setAutomaticMode(true);
+        
         // prepare for sample collection for gyro drift correction
         gyroLastRdg = gyro.getAngle();
         gyroLastTime = Timer.getFPGATimestamp();
@@ -65,33 +84,52 @@ public class RobotTemplate extends IterativeRobot {
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, false);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
     }
-    
+
+    public void disabledInit() {
+        driverStation.println(DriverStationLCD.Line.kUser2, 1, "Robot disabled.");   
+        driverStation.updateLCD();
+        System.out.println("Gyrobot disabled.");
+        
+        // start gyro compensation routine(note: DO NOT MOVE THE BOT!)
+        gyro.reset();
+        gyroLastRdg = gyro.getAngle();
+        gyroLastTime = Timer.getFPGATimestamp();
+        gyroDrift = 0;
+    }
+
     // called periodically during disabled
     public void disabledPeriodic() {
         // we should start reading the gyro here to correct for any drift
         // take a drift reading based on the last 5 seconds (MAY ADJUST!!!)
         double dt = Timer.getFPGATimestamp() - gyroLastTime;
-        if(dt >= 5){
-            // calculate drift
-            gyroDrift = (gyro.getAngle() - gyroLastRdg) / dt;
-            // save current reading
-            gyroLastRdg = gyro.getAngle();
+        if(dt >= 10){
             gyroLastTime = Timer.getFPGATimestamp();
         }
+        double d = sonar.getRangeInches();
+        driverStation.println(DriverStationLCD.Line.kUser4, 1, "Distance:" + Double.toString(d));   
+        driverStation.updateLCD();
     }
 
+    public void teleopInit() {
+        gyro.reset();
+        driverStation.println(DriverStationLCD.Line.kUser2, 1, "Robot in teleop...");   
+        driverStation.updateLCD();
+    }
     /**
      * This function is called periodically during autonomous
      */
-    public void autonomousPeriodic() {
+    public void teleopPeriodic() {
         
         //--------------------------------------------------------------------
         //  Gyro reading
         //--------------------------------------------------------------------
         
-        // calculate drift-adjusted gyro position
-        double gyroAngle = gyro.getAngle() + gyroDrift * (Timer.getFPGATimestamp() - gyroLastTime);
+        // calculate gyro position
+        double gyroAngle = gyro.getAngle();
         double time = Timer.getFPGATimestamp();
+        
+        driverStation.println(DriverStationLCD.Line.kUser3, 1, "Gyro angle:" + Double.toString(gyroAngle));   
+        driverStation.updateLCD();
         
         // control - standard or heading-lock
 
@@ -99,6 +137,9 @@ public class RobotTemplate extends IterativeRobot {
         double y = 0;   // fwd speed
         double x = 0;   // side motion
         double r = 0;   // rotation
+        
+        x = leftStick.getX();
+        y = leftStick.getY();
 
         //--------------------------------------------------------------------
         //  Sonar reading
@@ -163,8 +204,8 @@ public class RobotTemplate extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
-    public void teleopPeriodic() {
+    public void autonomousPeriodic() {
         // calculate drift-adjusted gyro position
-        double gyroAngle = gyro.getAngle() + gyroDrift * (Timer.getFPGATimestamp() - gyroLastTime);
+        //double gyroAngle = gyro.getAngle() + gyroDrift * (Timer.getFPGATimestamp() - gyroLastTime);
     }
 }
