@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-  
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -41,6 +40,7 @@ public class RobotTemplate extends IterativeRobot {
     Talon shooter;
     Talon hopper; 
     Talon angulator;  
+    Timer displayTimer; 
 
     
     
@@ -101,6 +101,8 @@ public class RobotTemplate extends IterativeRobot {
        angleEncoder = new Encoder(2, 3, 2, 4);
        angleEncoder.start(); 
        shooterCounter.start(); 
+       displayTimer = new Timer();
+       displayTimer.start(); 
        
     
         
@@ -159,9 +161,10 @@ public class RobotTemplate extends IterativeRobot {
         }     
     }
     
-
+   
     public void teleopInit() {
         gyro.reset();
+        
       //  driverStation.println(DriverStationLCD.Line.kUser2, 1, "Robot in teleop...");   
       //  driverStation.updateLCD();
     }
@@ -169,35 +172,76 @@ public class RobotTemplate extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void teleopPeriodic() {
+        
+        
+        winchHandler(); 
+        shooterHandler(); 
+        deckHandler();
+        loadHandler(); 
+        driveHandler();
+        displayHandler(); 
+    }
+        
     
-        
-        
-        //--------------------------------------------------------------------
-        //  Gyro reading
-        //--------------------------------------------------------------------
-        
-        // calculate gyro position
-       double gyroAngle = gyro.getAngle();
-       double time = Timer.getFPGATimestamp();
-        
-        //driverStation.println(DriverStationLCD.Line.kUser3, 1, "Gyro angle: " + Double.toString(gyroAngle));   
-      //  driverStation.updateLCD();
-        
-        // control - standard or heading-lock
 
-        // get control variables
-        double y = 0;   // fwd speed
-        double x = 0;   // side motion
-        double r = 0;   // rotation
-       
+    /**
+     * This function is called periodically during operator control
+     */
+    public void autonomousPeriodic() {
+        // calculate drift-adjusted gyro position
+        //double gyroAngle = gyro.getAngle() + gyroDrift * (Timer.getFPGATimestamp() - gyroLastTime);
+    }
+     public void deckHandler() { 
+         if(gamepad.getRawButton(6)){
+            angulator.set(1);
+        }
+            else if(gamepad.getRawButton(8)){
+                angulator.set(-1.0);
+        }
+        else {
+            angulator.set(0.0);
+        }
+    }
+    
+    public void loadHandler() { 
+         if(gamepad.getRawButton(5)) {
+            if(!shoot && !load && !trigger){
+                load = true;
+                trigger = true;
+            }
+        }
+        else {
+            trigger = false;
+        }
         
-        
-        x = leftStick.getX();
-        y = leftStick.getY();
-        r = rightStick.getX();
-       
-        
-        // print light sensor readings 
+        if(load){
+            // go past the mark
+            if(lightSensor2.get()){
+                // on the mark - move off of it
+                hopper.set(0.35);
+            }
+            else {
+                load = false;
+                shoot = true;
+            }
+        }
+        if(shoot) {
+            // go to next mark
+            if(!lightSensor2.get()){
+                // not on the mark - go faster (shooting)
+                hopper.set(0.5);
+            }
+            else {
+                // done
+                shoot = false;
+                load = false;
+                hopper.set(0.0);
+            }
+        }
+    }
+    
+    public void displayHandler() { 
+        if(gamepad.getRawButton(9)){
         SmartDashboard.putNumber("Shooter Counter", shooterCounter.get());
         SmartDashboard.putBoolean("LightSensor2", lightSensor2.get());
         SmartDashboard.putBoolean("LightSensor3", lightSensor3.get());
@@ -207,36 +251,29 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("LeftSonar(Inches)", sonar2.getRangeInches());
         SmartDashboard.putNumber("RightSonar(Inches)", sonar.getRangeInches()); 
         SmartDashboard.putNumber("Heading", gyro.getAngle()); 
-        SmartDashboard.putNumber("PowerSetting", gamepad.getY()); 
+        SmartDashboard.putNumber("PowerSetting", gamepad.getY());  
+    }
+    } 
+    public void driveHandler(){
         //--------------------------------------------------------------------
-        //  Sonar reading
+        //  Gyro reading
         //--------------------------------------------------------------------
-      //  double sonar1Dist = sonar.getRangeInches(); 
-      //  double sonar2Dist = sonar2.getRangeInches(); 
-        //driverStation.println(DriverStationLCD.Line.kUser5, 1, "Sonar1: " + Double.toString(sonar1Dist));
-        //driverStation.println(DriverStationLCD.Line.kUser6, 1, "Sonar2: " + Double.toString(sonar2Dist)); 
         
-        
-        
-     /*  double sideSonarDistance = 0;
-        if(sonarLock){
-            if(sideSonarDistance < 12){
-                sonarLocked = true;
-            }
-            if(sonarLocked){
-                if(sideSonarDistance < 9){
-                    r = 0.2;
-                }
-                else if(sideSonarDistance  > 10){
-                    r = -0.2;
-                }
-                else {
-                    r = 0;
-                }
-            }
-        }
-      */  
+        // calculate gyro position
+       double gyroAngle = gyro.getAngle();
+       double time = Timer.getFPGATimestamp();
        
+        // control - standard or heading-lock
+
+        // get control variables
+        double y = 0;   // fwd speed
+        double x = 0;   // side motion
+        double r = 0;   // rotation
+
+        x = leftStick.getX();
+        y = leftStick.getY();
+        r = rightStick.getX();
+   
         if(leftStick.getRawButton(1)){
             // lock the heading
             if(!headingLock){
@@ -277,7 +314,51 @@ public class RobotTemplate extends IterativeRobot {
         else {
             drive.mecanumDrive_Cartesian(x, y, r, 0.0);
         }
-        if(gamepad.getRawButton(1)){    
+    }
+    public void sonarHandler() {
+        //--------------------------------------------------------------------
+        //  Sonar reading
+        //--------------------------------------------------------------------
+    
+             
+     /*  double sideSonarDistance = 0;
+        if(sonarLock){
+            if(sideSonarDistance < 12){
+                sonarLocked = true;
+            }
+            if(sonarLocked){
+                if(sideSonarDistance < 9){
+                    r = 0.2;
+                }
+                else if(sideSonarDistance  > 10){
+                    r = -0.2;
+                }
+                else {
+                    r = 0;
+                }
+            }
+        }
+      */  
+    }
+    public void hopperHandler(){
+         if(gamepad.getRawButton(2)) {
+            hopper.set(gamepad.getY());
+        }
+        else {
+            hopper.set(0); 
+        }
+    }
+ public void shooterHandler (){
+              if(gamepad.getRawButton(4)){
+            shooter.set(gamepad.getY());
+        }
+        else {
+            
+        }
+
+    }
+ public void winchHandler(){
+       if(gamepad.getRawButton(1)){    
             w1.set(gamepad.getY()*0.6);
         }
         else {
@@ -289,72 +370,7 @@ public class RobotTemplate extends IterativeRobot {
         else {
             w2.stopMotor();
         }
-        
-        if(gamepad.getRawButton(4)){
-            shooter.set(gamepad.getY());
-        }
-        else {
-            
-        }
-        
-        if(gamepad.getRawButton(2)) {
-            hopper.set(gamepad.getY());
-        }
-        else {
-            hopper.set(0); 
-        }
-        
-        if(gamepad.getRawButton(6)){
-            angulator.set(1);
-        }
-            else if(gamepad.getRawButton(8)){
-                angulator.set(-1.0);
-        }
-        else {
-            angulator.set(0.0);
-        }
-        
-        if(gamepad.getRawButton(5)) {
-            if(!shoot && !load && !trigger){
-                load = true;
-                trigger = true;
-            }
-        }
-        else {
-            trigger = false;
-        }
-        
-        if(load){
-            // go past the mark
-            if(lightSensor2.get()){
-                // on the mark - move off of it
-                hopper.set(0.35);
-            }
-            else {
-                load = false;
-                shoot = true;
-            }
-        }
-        if(shoot) {
-            // go to next mark
-            if(!lightSensor2.get()){
-                // not on the mark - go faster (shooting)
-                hopper.set(0.5);
-            }
-            else {
-                // done
-                shoot = false;
-                load = false;
-                hopper.set(0.0);
-            }
-        }
-    }
-
-    /**
-     * This function is called periodically during operator control
-     */
-    public void autonomousPeriodic() {
-        // calculate drift-adjusted gyro position
-        //double gyroAngle = gyro.getAngle() + gyroDrift * (Timer.getFPGATimestamp() - gyroLastTime);
     }
 }
+    
+
