@@ -81,6 +81,10 @@ public class RobotTemplate extends IterativeRobot {
     Encoder angleEncoder;
     Encoder rightWinchEncoder; 
     Encoder leftWinchEncoder; 
+    Encoder frontLeftEncoder;
+    Encoder frontRightEncoder; 
+    Encoder rearLeftEncoder; 
+    Encoder rearRightEncoder; 
     
     boolean shoot, load, trigger;
     boolean moveUp; 
@@ -147,6 +151,10 @@ public class RobotTemplate extends IterativeRobot {
        angleEncoder = new Encoder(2, 3, 2, 4);
        rightWinchEncoder = new Encoder(1, 8, 1, 9);
        leftWinchEncoder = new Encoder(1, 10, 1, 11); 
+       frontLeftEncoder = new Encoder(2, 5, 2, 6);
+       frontRightEncoder = new Encoder(2, 7, 2, 8); 
+       rearLeftEncoder = new Encoder(2, 9, 2, 10);
+       rearRightEncoder = new Encoder(2, 11, 2, 12); 
        angleEncoder.start(); 
        shooterCounter.start(); 
        displayTimer = new Timer();       
