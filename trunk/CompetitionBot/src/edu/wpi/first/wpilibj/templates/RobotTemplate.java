@@ -258,10 +258,10 @@ public class RobotTemplate extends IterativeRobot {
     public void teleopInit() {
         gyro.reset();
         
-       launcherSlots[0] = true;
-       launcherSlots[1] = true;
-       launcherSlots[2] = true;
-       launcherSlots[3] = true;
+       launcherSlots[0] = false;
+       launcherSlots[1] = false;
+       launcherSlots[2] = false;
+       launcherSlots[3] = false;
        
        launcherTurning = false;
        launcherSettling = false;
@@ -302,15 +302,71 @@ public class RobotTemplate extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
+    public void autonomousInit(){ 
+       launcherSlots[0] = false;
+       launcherSlots[1] = true;
+       launcherSlots[2] = true;
+       launcherSlots[3] = true;
+       shooter.set(1); 
+    }
+    
     public void autonomousPeriodic() {
-        // calculate drift-adjusted gyro position
-        //double gyroAngle = gyro.getAngle() + gyroDrift * (Timer.getFPGATimestamp() - gyroLastTime);
+        
+        launcherHandlerAuto(); 
+        deckHandlerAuto(); 
+        
+              
     } 
-     public void deckHandler() { 
-     double angulatorPower; 
+    
+    public void deckHandlerAuto(){
+        
+         double angulatorPower; 
      angulatorPower = 0;
-     moveUp = rightStick.getRawButton(3); 
-     moveDown = rightStick.getRawButton(2); 
+    
+     firingPosition = true; 
+ 
+     if(moveUp && upperLimit.get()){
+         deckTopRequest = false; 
+         deckBottomRequest = false; 
+       //  firingPosition = false; 
+         angulatorPower = 1; 
+     } 
+     else if(moveDown && lowerLimit.get()){
+         deckTopRequest = false; 
+         deckBottomRequest = false; 
+      //   firingPosition = false; 
+         angulatorPower = -1;     
+     }
+     else if(deckTopRequest && upperLimit.get()){
+         angulatorPower = 1; 
+     }
+     else if(deckBottomRequest && lowerLimit.get()){ 
+         angulatorPower = -1;
+     }
+     else if(firingPosition && (angleEncoder.getDistance() + 16) > 40){
+         angulatorPower = -1; 
+     }
+     else if(firingPosition && (angleEncoder.getDistance() + 16) < 35){
+         angulatorPower = 1; 
+     }
+     else { 
+         deckTopRequest = false; 
+         deckBottomRequest = false; 
+         firingPosition = false; 
+         angulatorPower = 0; 
+     }
+       
+     angulator.set(angulatorPower); 
+     
+ }
+    
+    
+    public void deckHandler() { 
+     
+         double angulatorPower; 
+     angulatorPower = 0;
+     moveUp = leftStick.getRawButton(3); 
+     moveDown = leftStick.getRawButton(2); 
     // firingPosition = 
  
      if(moveUp && upperLimit.get()){
@@ -349,31 +405,14 @@ public class RobotTemplate extends IterativeRobot {
  }
     
     public void displayHandler() {
-        SmartDashboard.putNumber("Right Winch Encoder(Inches)", rightWinchEncoder.getDistance());
-        SmartDashboard.putNumber("Left Winch Encoder(Inches)", leftWinchEncoder.getDistance()); 
-        SmartDashboard.putNumber("LeftThrottleTest", leftStick.getThrottle());
-       
-        if(gamepad.getRawButton(9)){
-        SmartDashboard.putBoolean("fresbeeSensor", fresbeeSensor.get());
-        SmartDashboard.putBoolean("mixerSensor", mixerSensor.get());
-        SmartDashboard.putBoolean("shooterWheelSensor", shooterWheelSensor.get());
-        
-        SmartDashboard.putNumber("Avg Sonar Distance", sonarDistance); 
-        SmartDashboard.putNumber("RightSonar(Inches)", rightSonar.getRangeInches());
-        SmartDashboard.putNumber("LeftSonar(Inches)", leftSonar.getRangeInches()); 
-        SmartDashboard.putNumber("SonarDifference", sonarDifference);
-        SmartDashboard.putNumber("Heading", gyro.getAngle()); 
-        
         SmartDashboard.putNumber("ActualRPM", shooterRPM);  
-        SmartDashboard.putNumber("TargetRPM", targetRPM);  
-        SmartDashboard.putNumber("TargetPower", predictedPower);
+        
         SmartDashboard.putNumber("ActualPower", actualPower);  
         
         SmartDashboard.putNumber("Angle Encoder(Degrees", ((angleEncoder.getDistance() + 16)));
-        SmartDashboard.putBoolean("UpperLimit", upperLimit.get());
-        SmartDashboard.putBoolean("LowerLimit", lowerLimit.get()); 
+       
         }
-    } 
+    
     
     public void driveHandler(){
         
@@ -469,17 +508,11 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
     public void shooterHandler (){
-    if(rightStick.getRawButton(4)){
-        shooter.set(1);
-    }
-    else if(rightStick.getRawButton(6)){
-        shooter.set(0);
-    }
-    else {
+    
+        if(rightStick.getRawButton(3)){
         
-    }
         
-     /*   targetRPM = leftStick.getThrottle();
+        targetRPM = 1500;
       
         predictedPower = targetRPM * (0.4/1400.0);
         RPMError = targetRPM - shooterRPM;
@@ -500,7 +533,13 @@ public class RobotTemplate extends IterativeRobot {
             actualPower = 0; 
         }
         shooter.set(actualPower);
-   */ }
+    }
+    
+    else if(rightStick.getRawButton(2)){
+        shooter.set(0);
+         }
+    }
+    
     public void winchHandler(){
        if(gamepad.getRawButton(1)){    
             w1.set(gamepad.getY()*0.6);
@@ -555,7 +594,7 @@ public class RobotTemplate extends IterativeRobot {
     
     
     public void failSafe(){
-        if (leftStick.getRawButton(2)){
+        if (leftStick.getRawButton(6)){
             pusherIn(); 
         }
         else {
@@ -563,6 +602,88 @@ public class RobotTemplate extends IterativeRobot {
         
         }
     
+    
+    public void launcherHandlerAuto(){ 
+         // handle user interface
+        
+            launcherLoading = true;
+            launcherShooting = true;
+        
+
+     
+
+        // turn if chamber empty or slot 2 empty
+        if(launcherSlots[0] && (!launcherSlots[3] || !launcherSlots[2]) && !launcherTurning && !launcherSettling && !launcherLoading && !launcherShooting){
+        // if(gamepad.getRawButton(10)){
+            startTurning(); // DO NOT JUST SET launcherTurning to true
+        }
+        
+        // now handle the launcher state machine
+        if(launcherTurning){
+            if(turnTimer.get() < 0.10){
+                launcherPastMark = false;
+                // lift tapper servo
+                tapperUp();
+            }
+            else if(turnTimer.get() < 1.0){
+                // start turning
+                hopper.set(0.75);
+                turnTimer.stop();
+            }
+            else if(turnTimer.get() < 3.0){
+                
+            }
+            
+            if(!launcherPastMark){
+                // spinning - wait to hit the mark...
+               if(!mixerSensor.get()){
+                   launcherPastMark = true;
+               }
+            }
+            else {
+                // stop when past the mark
+                if(mixerSensor.get()){
+                    int i;
+                    hopper.set(0.0);
+                    launcherTurning = false;
+                    launcherSettling = true;
+                    settlingTimer.reset();
+                    settlingTimer.start();
+                    // lower tapper servo
+                    tapperDown();
+
+                    // done turning - shift slots
+                    // note: we do NOT shift emptiness into slot 3, only a fresbee (if there was one in slot 2!)
+                    // chamber can only be loaded, gets emptied via a shot
+                    if(launcherSlots[2]) { launcherSlots[3] = true; }
+                    launcherSlots[2] = launcherSlots[1];
+                    launcherSlots[1] = launcherSlots[0];
+                    launcherSlots[0] = false;   // feeder slot
+                }
+            }
+        }
+        else if(launcherSettling){
+            if(settlingTimer.get() > 0.3){
+                settlingTimer.stop();
+                launcherSettling = false;
+            }
+        }
+        
+        else if(launcherLoading){
+            // turn if disc available but not in the chamber
+            if((!launcherSlots[3]) && (launcherSlots[2] || launcherSlots[1] || launcherSlots[0])){
+                startTurning();
+            }
+            else {
+                // loading done
+                launcherLoading = false;
+                // check if load successful - if not cancel a shoot
+                if((!launcherSlots[3]) && launcherShooting) {
+                    launcherShooting = false;
+                }
+            }
+        }
+    }
     
     public void launcherHandler()
     {
