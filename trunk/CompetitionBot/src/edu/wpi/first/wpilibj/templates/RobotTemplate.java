@@ -96,6 +96,7 @@ public class RobotTemplate extends IterativeRobot {
     double actualPower; 
     double sonarDistance; 
     double sonarDifference; 
+    boolean goodFeed;
     
     boolean deckTopRequest; 
     boolean deckBottomRequest; 
@@ -415,10 +416,12 @@ public class RobotTemplate extends IterativeRobot {
         
         SmartDashboard.putBoolean("Fire", goodShot); 
         
+        SmartDashboard.putNumber("Sonar Distance", sonarDistance); 
         
+        SmartDashboard.putBoolean("Feed", goodFeed); 
             
         
-       
+        
         }
     
     
@@ -505,6 +508,9 @@ public class RobotTemplate extends IterativeRobot {
     public void sonarHandler() {
         sonarDistance = ((rightSonar.getRangeInches() + leftSonar.getRangeInches())/2); 
         sonarDifference = rightSonar.getRangeInches() - leftSonar.getRangeInches(); 
+        if(sonarDistance <= 5.5){ 
+            goodFeed = true; 
+        }
         
         
     }
