@@ -294,6 +294,7 @@ public class RobotTemplate extends IterativeRobot {
         angleHandler(); 
         shooterEncoder(); 
         sonarHandler(); 
+        failSafe(); 
     }
         
     
@@ -350,6 +351,7 @@ public class RobotTemplate extends IterativeRobot {
     public void displayHandler() {
         SmartDashboard.putNumber("Right Winch Encoder(Inches)", rightWinchEncoder.getDistance());
         SmartDashboard.putNumber("Left Winch Encoder(Inches)", leftWinchEncoder.getDistance()); 
+        SmartDashboard.putNumber("LeftThrottleTest", leftStick.getThrottle());
        
         if(gamepad.getRawButton(9)){
         SmartDashboard.putBoolean("fresbeeSensor", fresbeeSensor.get());
@@ -467,8 +469,17 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
     public void shooterHandler (){
+    if(rightStick.getRawButton(4)){
+        shooter.set(1);
+    }
+    else if(rightStick.getRawButton(6)){
+        shooter.set(0);
+    }
+    else {
         
-        targetRPM = leftStick.getThrottle();
+    }
+        
+     /*   targetRPM = leftStick.getThrottle();
       
         predictedPower = targetRPM * (0.4/1400.0);
         RPMError = targetRPM - shooterRPM;
@@ -489,7 +500,7 @@ public class RobotTemplate extends IterativeRobot {
             actualPower = 0; 
         }
         shooter.set(actualPower);
-    }
+   */ }
     public void winchHandler(){
        if(gamepad.getRawButton(1)){    
             w1.set(gamepad.getY()*0.6);
@@ -541,6 +552,16 @@ public class RobotTemplate extends IterativeRobot {
     {
         pusher.set(0.4);
     }
+    
+    
+    public void failSafe(){
+        if (leftStick.getRawButton(2)){
+            pusherIn(); 
+        }
+        else {
+        }
+        
+        }
     
     
     public void launcherHandler()
