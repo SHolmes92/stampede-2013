@@ -79,8 +79,10 @@ public class RobotTemplate extends IterativeRobot {
     DigitalInput upperLimit; 
     Counter shooterCounter; 
     Encoder angleEncoder;
+    
     Encoder rightWinchEncoder; 
     Encoder leftWinchEncoder; 
+    
     Encoder frontLeftEncoder;
     Encoder frontRightEncoder; 
     Encoder rearLeftEncoder; 
@@ -149,20 +151,33 @@ public class RobotTemplate extends IterativeRobot {
        upperLimit = new DigitalInput(2, 1); 
        shooterCounter = new Counter(shooterWheelSensor); 
        angleEncoder = new Encoder(2, 3, 2, 4);
+       
        rightWinchEncoder = new Encoder(1, 8, 1, 9);
        leftWinchEncoder = new Encoder(1, 10, 1, 11); 
+/* // Might be out of encoders... 
+ 
        frontLeftEncoder = new Encoder(2, 5, 2, 6);
        frontRightEncoder = new Encoder(2, 7, 2, 8); 
        rearLeftEncoder = new Encoder(2, 9, 2, 10);
        rearRightEncoder = new Encoder(2, 11, 2, 12); 
+ 
+       frontLeftEncoder.start();
+       frontRightEncoder.start();
+       rearLeftEncoder.start();
+       rearRightEncoder.start();
+   
+ */      
        angleEncoder.start(); 
        shooterCounter.start(); 
        displayTimer = new Timer();       
        shooterTimer = new Timer(); 
        displayTimer.start(); 
-       shooterTimer.start(); 
+       shooterTimer.start();
+       
        rightWinchEncoder.start(); 
-       leftWinchEncoder.start(); 
+       leftWinchEncoder.start();
+       
+       
        angleEncoder.setDistancePerPulse(-41.0/26.0 * 4);
        targetRPM = 0; 
        LightRelay = new Relay(2, 1, Relay.Direction.kForward); 
@@ -265,6 +280,7 @@ public class RobotTemplate extends IterativeRobot {
       //  driverStation.updateLCD();
     }
     /**
+     * 
      * This function is called periodically during autonomous
      */
     public void teleopPeriodic() {
@@ -292,20 +308,20 @@ public class RobotTemplate extends IterativeRobot {
      public void deckHandler() { 
      double angulatorPower; 
      angulatorPower = 0;
-     moveUp = gamepad.getRawButton(6);
-     moveDown = gamepad.getRawButton(8);
-     firingPosition = rightStick.getRawButton(3); 
+     moveUp = rightStick.getRawButton(3); 
+     moveDown = rightStick.getRawButton(2); 
+    // firingPosition = 
  
      if(moveUp && upperLimit.get()){
          deckTopRequest = false; 
          deckBottomRequest = false; 
-         firingPosition = false; 
+       //  firingPosition = false; 
          angulatorPower = 1; 
      } 
      else if(moveDown && lowerLimit.get()){
          deckTopRequest = false; 
          deckBottomRequest = false; 
-         firingPosition = false; 
+      //   firingPosition = false; 
          angulatorPower = -1;     
      }
      else if(deckTopRequest && upperLimit.get()){
@@ -314,12 +330,12 @@ public class RobotTemplate extends IterativeRobot {
      else if(deckBottomRequest && lowerLimit.get()){ 
          angulatorPower = -1;
      }
-     else if(firingPosition && (angleEncoder.getDistance() + 16) > 40){
-         angulatorPower = -1; 
-     }
-     else if(firingPosition && (angleEncoder.getDistance() + 16) < 35){
-         angulatorPower = 1; 
-     }
+  //   else if(firingPosition && (angleEncoder.getDistance() + 16) > 40){
+  //       angulatorPower = -1; 
+  //   }
+  //   else if(firingPosition && (angleEncoder.getDistance() + 16) < 35){
+  //       angulatorPower = 1; 
+  //   }
      else { 
          deckTopRequest = false; 
          deckBottomRequest = false; 
@@ -330,43 +346,6 @@ public class RobotTemplate extends IterativeRobot {
      angulator.set(angulatorPower); 
      
  }
-    
-    public void loadHandler() { 
-         if(gamepad.getRawButton(5)) {
-            if(!shoot && !load && !trigger){
-                load = true;
-                trigger = true;
-            }
-        }
-        else {
-            trigger = false;
-        }
-        
-        if(load){
-            // go past the mark
-            if(fresbeeSensor.get()){
-                // on the mark - move off of it
-                hopper.set(0.55);
-            }
-            else {
-                load = false;
-                shoot = true;
-            }
-        }
-        if(shoot) {
-            // go to next mark
-            if(!mixerSensor.get()){
-                // not on the mark - go faster (shooting)
-                hopper.set(0.6);
-            }
-            else {
-                // done
-                shoot = false;
-                load = false;
-                hopper.set(0.0);
-            }
-        }
-    }
     
     public void displayHandler() {
         SmartDashboard.putNumber("Right Winch Encoder(Inches)", rightWinchEncoder.getDistance());
@@ -488,9 +467,9 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
     public void shooterHandler (){
-        if(gamepad.getRawButton(4)){
-            targetRPM = (((-gamepad.getY()+1)/2)*1500);
-        }
+        
+        targetRPM = leftStick.getThrottle();
+      
         predictedPower = targetRPM * (0.4/1400.0);
         RPMError = targetRPM - shooterRPM;
         double powerCorrection; 
@@ -498,8 +477,8 @@ public class RobotTemplate extends IterativeRobot {
         actualPower = predictedPower + powerCorrection;
         
         // special case for low power testing
-        // if(targetRPM < 750){
         if(true){
+        //if(targetRPM < 750){
             actualPower = targetRPM / 1500;
         }
         
@@ -532,8 +511,8 @@ public class RobotTemplate extends IterativeRobot {
    }
     public void shooterEncoder(){
      
-     if(shooterTimer.get() > 1){
-         shooterRPM = (shooterCounter.get()/4.0 * 60.0); 
+     if(shooterTimer.get() > 0.75){
+         shooterRPM = (shooterCounter.get() / 4.0 * 60.0 / 0.75); 
          shooterCounter.reset(); 
          shooterTimer.reset(); 
      }
@@ -567,7 +546,7 @@ public class RobotTemplate extends IterativeRobot {
     public void launcherHandler()
     {
         // handle user interface
-        if(gamepad.getRawButton(5) && !(launcherShooting || launcherLoading || launcherPausing)) {
+        if(rightStick.getRawButton(5)  && !(launcherShooting || launcherLoading || launcherPausing)) {
             launcherLoading = true;
             launcherShooting = true;
         }
@@ -600,7 +579,7 @@ public class RobotTemplate extends IterativeRobot {
         // turn if chamber empty or slot 2 empty
         if(launcherSlots[0] && (!launcherSlots[3] || !launcherSlots[2]) && !launcherTurning && !launcherSettling && !launcherLoading && !launcherShooting){
         // if(gamepad.getRawButton(10)){
-            startTurning(); // DO NOTY JUST SET launcherTurning to true
+            startTurning(); // DO NOT JUST SET launcherTurning to true
         }
         
         // now handle the launcher state machine
