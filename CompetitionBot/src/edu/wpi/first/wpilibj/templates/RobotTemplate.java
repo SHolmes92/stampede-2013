@@ -114,6 +114,7 @@ public class RobotTemplate extends IterativeRobot {
     boolean launcherPastMark;
     boolean discInFeeder;
     boolean fresbeeDetected;
+    boolean goodShot; 
     Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer; 
 
     
@@ -316,11 +317,6 @@ public class RobotTemplate extends IterativeRobot {
         if(autoTimer.get() > 1){
         deckHandlerAuto();
         }
-        
-        if(autoTimer.get() > 3){ 
-        launcherHandlerAuto(); 
-         
-        }
               
     } 
     
@@ -416,6 +412,12 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("ActualPower", actualPower);  
         
         SmartDashboard.putNumber("Angle Encoder(Degrees", ((angleEncoder.getDistance() + 16)));
+        
+        SmartDashboard.putBoolean("Fire", goodShot); 
+        
+      
+            
+        
        
         }
     
@@ -545,7 +547,15 @@ public class RobotTemplate extends IterativeRobot {
     else if(rightStick.getRawButton(2)){
         shooter.set(0);
          }
+        
+    if(shooterRPM >= 1500){
+        goodShot = true; 
     }
+    else{ 
+        
+    }
+    }
+    
     
     public void winchHandler(){
        if(gamepad.getRawButton(1)){    
@@ -610,115 +620,12 @@ public class RobotTemplate extends IterativeRobot {
         }
     
     
-    public void launcherHandlerAuto(){ 
-         // handle user interface
-        if(true){
-            launcherLoading = true;
-            launcherShooting = true;
-        }
-
-     // handle disc detector
-        if(fresbeeSensor.get()){
-            if(!fresbeeDetected){
-                fresbeeDetected = true;
-                feederTimer.reset();
-                feederTimer.start();
-            }
-            else {
-                if(!discInFeeder && feederTimer.get() > 0.25){
-                    feederTimer.stop();
-                    feederTimer.reset();
-                    discInFeeder = true;
-                }
-            }
-        }
-        else {
-            discInFeeder = false;
-            fresbeeDetected = false;
-        }
-        
-        // mark feeder slot as occupied
-        if(discInFeeder) {
-            launcherSlots[0] = true;
-        }
-
-        // turn if chamber empty or slot 2 empty
-        if(launcherSlots[0] && (!launcherSlots[3] || !launcherSlots[2]) && !launcherTurning && !launcherSettling && !launcherLoading && !launcherShooting){
-        // if(gamepad.getRawButton(10)){
-            startTurning(); // DO NOT JUST SET launcherTurning to true
-        }
-        
-        // now handle the launcher state machine
-        if(launcherTurning){
-            if(turnTimer.get() < 0.10){
-                launcherPastMark = false;
-                // lift tapper servo
-                tapperUp();
-            }
-            else if(turnTimer.get() < 1.0){
-                // start turning
-                hopper.set(0.75);
-                turnTimer.stop();
-            }
-            else if(turnTimer.get() < 3.0){
-                
-            }
-            
-            if(!launcherPastMark){
-                // spinning - wait to hit the mark...
-               if(!mixerSensor.get()){
-                   launcherPastMark = true;
-               }
-            }
-            else {
-                // stop when past the mark
-                if(mixerSensor.get()){
-                    int i;
-                    hopper.set(0.0);
-                    launcherTurning = false;
-                    launcherSettling = true;
-                    settlingTimer.reset();
-                    settlingTimer.start();
-                    // lower tapper servo
-                    tapperDown();
-
-                    // done turning - shift slots
-                    // note: we do NOT shift emptiness into slot 3, only a fresbee (if there was one in slot 2!)
-                    // chamber can only be loaded, gets emptied via a shot
-                    if(launcherSlots[2]) { launcherSlots[3] = true; }
-                    launcherSlots[2] = launcherSlots[1];
-                    launcherSlots[1] = launcherSlots[0];
-                    launcherSlots[0] = false;   // feeder slot
-                }
-            }
-        }
-        else if(launcherSettling){
-            if(settlingTimer.get() > 0.3){
-                settlingTimer.stop();
-                launcherSettling = false;
-            }
-        }
-        
-        else if(launcherLoading){
-            // turn if disc available but not in the chamber
-            if((!launcherSlots[3]) && (launcherSlots[2] || launcherSlots[1] || launcherSlots[0])){
-                startTurning();
-            }
-            else {
-                // loading done
-                launcherLoading = false;
-                // check if load successful - if not cancel a shoot
-                if((!launcherSlots[3]) && launcherShooting) {
-                    launcherShooting = false;
-                }
-            }
-        }
-    }
+  
     
     public void launcherHandler()
     {
         // handle user interface
-        if(rightStick.getRawButton(5)  && !(launcherShooting || launcherLoading || launcherPausing)) {
+        if(rightStick.getRawButton(1)  && !(launcherShooting || launcherLoading || launcherPausing)) {
             launcherLoading = true;
             launcherShooting = true;
         }
