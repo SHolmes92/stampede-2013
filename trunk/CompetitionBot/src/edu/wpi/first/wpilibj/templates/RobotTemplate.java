@@ -415,7 +415,7 @@ public class RobotTemplate extends IterativeRobot {
         
         SmartDashboard.putBoolean("Fire", goodShot); 
         
-      
+        
             
         
        
