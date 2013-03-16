@@ -114,7 +114,7 @@ public class RobotTemplate extends IterativeRobot {
     boolean launcherPastMark;
     boolean discInFeeder;
     boolean fresbeeDetected;
-    Timer shotTimer, turnTimer, settlingTimer, feederTimer;
+    Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer; 
 
     
     /**
@@ -200,6 +200,7 @@ public class RobotTemplate extends IterativeRobot {
        settlingTimer = new Timer();
        shotTimer = new Timer();
        feederTimer = new Timer();
+       autoTimer = new Timer(); 
        
         // note: 1 is output (marked INPUT on VEX!!!)
         // note: 2 is input (marked OUTPUT on VEX!!!)
@@ -308,13 +309,18 @@ public class RobotTemplate extends IterativeRobot {
        launcherSlots[2] = true;
        launcherSlots[3] = true;
        shooter.set(1); 
+       autoTimer.start(); 
     }
     
     public void autonomousPeriodic() {
+        if(autoTimer.get() > 1){
+        deckHandlerAuto();
+        }
         
+        if(autoTimer.get() > 3){ 
         launcherHandlerAuto(); 
-        deckHandlerAuto(); 
-        
+         
+        }
               
     } 
     
@@ -328,13 +334,13 @@ public class RobotTemplate extends IterativeRobot {
      if(moveUp && upperLimit.get()){
          deckTopRequest = false; 
          deckBottomRequest = false; 
-       //  firingPosition = false; 
+         firingPosition = false; 
          angulatorPower = 1; 
      } 
      else if(moveDown && lowerLimit.get()){
          deckTopRequest = false; 
          deckBottomRequest = false; 
-      //   firingPosition = false; 
+         firingPosition = false; 
          angulatorPower = -1;     
      }
      else if(deckTopRequest && upperLimit.get()){
@@ -423,7 +429,7 @@ public class RobotTemplate extends IterativeRobot {
       double gyroAngle = gyro.getAngle();
       double time = Timer.getFPGATimestamp();
        
-       if(rightStick.getRawButton(1)){
+     /*  if(rightStick.getRawButton(1)){
             // lock the heading
             if(!headingLock){
                 headingLock = true;
@@ -461,7 +467,8 @@ public class RobotTemplate extends IterativeRobot {
         else {
             drive.mecanumDrive_Cartesian(x, y, r, 0.0);
         }
-        
+       */
+      
         if(leftStick.getRawButton(1) && sonarDistance < 30){
             // stop moving forward
             if(y < 0){      
@@ -605,12 +612,35 @@ public class RobotTemplate extends IterativeRobot {
     
     public void launcherHandlerAuto(){ 
          // handle user interface
-        
+        if(true){
             launcherLoading = true;
             launcherShooting = true;
-        
+        }
 
-     
+     // handle disc detector
+        if(fresbeeSensor.get()){
+            if(!fresbeeDetected){
+                fresbeeDetected = true;
+                feederTimer.reset();
+                feederTimer.start();
+            }
+            else {
+                if(!discInFeeder && feederTimer.get() > 0.25){
+                    feederTimer.stop();
+                    feederTimer.reset();
+                    discInFeeder = true;
+                }
+            }
+        }
+        else {
+            discInFeeder = false;
+            fresbeeDetected = false;
+        }
+        
+        // mark feeder slot as occupied
+        if(discInFeeder) {
+            launcherSlots[0] = true;
+        }
 
         // turn if chamber empty or slot 2 empty
         if(launcherSlots[0] && (!launcherSlots[3] || !launcherSlots[2]) && !launcherTurning && !launcherSettling && !launcherLoading && !launcherShooting){
