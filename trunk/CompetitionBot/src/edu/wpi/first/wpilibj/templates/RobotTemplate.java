@@ -118,6 +118,8 @@ public class RobotTemplate extends IterativeRobot {
         shooter.handler();
         launcher.handler();
         winch.handler();
+        
+        displayHandler();
 
         driveTrain.ui();
         deck.ui();
@@ -228,5 +230,7 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("Sonar Distance", driveTrain.sonarDistance);
         
         SmartDashboard.putNumber("Odometer", driveTrain.distanceCounter.get());
+        
+        SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.get());
     }
 }
