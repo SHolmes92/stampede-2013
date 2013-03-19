@@ -33,7 +33,7 @@ public class Deck {
             deckAngleOffset,
             targetAngle;
     private static final double deckUpAngle = 61;
-    private static final double deckDownAngle = 16;
+    private static final double deckDownAngle = 9;
     private static final double shootingPositionAngle = 45;
     private static final double towerPositionAngle = 50;
 

@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Preferences; 
+import edu.wpi.first.wpilibj.Preferences;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,14 +31,13 @@ public class RobotTemplate extends IterativeRobot {
     Joystick leftStick;
     Joystick rightStick;
     Joystick gamepad;
-    Timer autoTimer; 
+    Timer autoTimer;
     int autoState;
     int autoShots;
-    double autoBackTime; 
+    double autoBackTime;
     double autoShotAngle;
-    double autoShotRPM; 
-    Preferences autoPrefs; 
-    
+    double autoShotRPM;
+    Preferences autoPrefs;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -91,13 +90,12 @@ public class RobotTemplate extends IterativeRobot {
         launcher.rePushButton = 7;
         launcher.reTapButton = 6;
 
-        autoTimer = new Timer(); 
-        
-        
+        autoTimer = new Timer();
+
+
     }
 
     public void disabledInit() {
-       
     }
 
     // called periodically during disabled
@@ -108,7 +106,7 @@ public class RobotTemplate extends IterativeRobot {
         driveTrain.teleopInit();
         launcher.teleopInit();
         deck.teleopInit();
-       
+
 
     }
 
@@ -118,7 +116,7 @@ public class RobotTemplate extends IterativeRobot {
         shooter.handler();
         launcher.handler();
         winch.handler();
-        
+
         displayHandler();
 
         driveTrain.ui();
@@ -126,103 +124,100 @@ public class RobotTemplate extends IterativeRobot {
         shooter.ui();
         launcher.ui();
         // winch.ui(); 
-        
-        if(leftStick.getRawButton(2)){ 
+
+        if (leftStick.getRawButton(2)) {
             //loading configuration 
             deck.moveToBottom();
             shooter.setTargetRPM(0);
-        }
-        else if(leftStick.getRawButton(3)){
+        } else if (leftStick.getRawButton(3)) {
             //shooting configuration 
             deck.moveToAngle(45);
             shooter.setTargetRPM(1500);
         }
-        
+
     }
 
-    
     public void autonomousInit() {
         driveTrain.drive.setSafetyEnabled(false);
-        
+
         launcher.autonomousInit();
-        autoTimer.start(); 
+        autoTimer.start();
         autoState = 0;
-      /*
-        autoShots = autoPrefs.getInt("autoShotCount", 3);
-        autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
-        autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40); 
-        autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200); 
-      */  
+        /*
+         autoShots = autoPrefs.getInt("autoShotCount", 3);
+         autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
+         autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40); 
+         autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200); 
+         */
         deck.autonomousInit();
-        
-        autoShots = 3; 
+
+        autoShots = 3;
         autoBackTime = 0;
-        autoShotAngle = 40; 
-        autoShotRPM = 1200; 
-        
-        
+        autoShotAngle = 40;
+        autoShotRPM = 1200;
+
+
     }
 
     public void autonomousPeriodic() {
-       
+
         driveTrain.handler();
         deck.handler();
         shooter.handler();
         launcher.handler();
         winch.handler();
-        
+
         //handle sequencing 
-        double t = autoTimer.get(); 
-        
-        switch(autoState){
+        double t = autoTimer.get();
+
+        switch (autoState) {
             case 0: // raise deck, spin up
                 deck.moveToTop();
                 shooter.setTargetRPM(1200);
                 autoState++;
                 break;
-                
+
             case 1: // check if deck up, go to target angle
-                if(deck.isAtTop()){
+                if (deck.isAtTop()) {
                     deck.moveToAngle(40);
                     autoState++;
                 }
                 break;
-                
+
             case 2: // wait until deck at level
-                if(deck.isAtTargetAngle()){
+                if (deck.isAtTargetAngle()) {
                     autoState++;
                 }
                 break;
-                
+
             case 3: // make sure some min. time has transpired
-                if(t >= 3){
+                if (t >= 3) {
                     autoState++;
                     autoTimer.reset();
                 }
                 break;
-                
+
             case 4: // shoot every 2 seconds, 3 times
-                if(autoShots > 0){
-                    if(t >= 2){
-                     launcher.fire();
-                     autoTimer.reset();
+                if (autoShots > 0) {
+                    if (t >= 2) {
+                        launcher.fire();
+                        autoTimer.reset();
+                        autoShots--;
                     }
-                    autoShots--;
-                }
-                else {
+                } else {
                     autoState++;
                 }
                 break;
-                
+
             case 5: // back out
                 // drive backwards slowly
                 driveTrain.drive(0, -0.4, 0);
                 autoTimer.reset();
                 autoState++;
                 break;
-                
+
             case 6:
-                if(t > 3){
+                if (t > 3) {
                     // stop
                     driveTrain.drive(0, 0, 0);
                     autoState++;
@@ -242,11 +237,11 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("Angle Encoder(Degrees", deck.deckAngle);
 
         SmartDashboard.putNumber("Sonar Distance", driveTrain.sonarDistance);
-        
+
         SmartDashboard.putNumber("Odometer", driveTrain.distanceCounter.get());
-        
+
         SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getDistance());
-        
-        SmartDashboard.putNumber("TargetRPM", shooter.targetRPM); 
+
+        SmartDashboard.putNumber("TargetRPM", shooter.targetRPM);
     }
 }
