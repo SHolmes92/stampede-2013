@@ -142,6 +142,8 @@ public class RobotTemplate extends IterativeRobot {
 
     
     public void autonomousInit() {
+        driveTrain.drive.setSafetyEnabled(false);
+        
         launcher.autonomousInit();
         autoTimer.start(); 
         autoState = 0;
@@ -162,6 +164,7 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
+       
         driveTrain.handler();
         deck.handler();
         shooter.handler();
