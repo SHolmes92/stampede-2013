@@ -145,11 +145,18 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start(); 
         autoState = 0;
+      /*
         autoShots = autoPrefs.getInt("autoShotCount", 3);
         autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
         autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40); 
         autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200); 
+      */  
         deck.autonomousInit();
+        
+        autoShots = 3; 
+        autoBackTime = 0;
+        autoShotAngle = 40; 
+        autoShotRPM = 1200; 
         
         
     }
@@ -170,23 +177,27 @@ public class RobotTemplate extends IterativeRobot {
                 shooter.setTargetRPM(1200);
                 autoState++;
                 break;
+                
             case 1: // check if deck up, go to target angle
                 if(deck.isAtTop()){
                     deck.moveToAngle(40);
                     autoState++;
                 }
                 break;
+                
             case 2: // wait until deck at level
                 if(deck.isAtTargetAngle()){
                     autoState++;
                 }
                 break;
+                
             case 3: // make sure some min. time has transpired
                 if(t >= 3){
                     autoState++;
                     autoTimer.reset();
                 }
                 break;
+                
             case 4: // shoot every 2 seconds, 3 times
                 if(autoShots > 0){
                     if(t >= 2){
@@ -231,7 +242,7 @@ public class RobotTemplate extends IterativeRobot {
         
         SmartDashboard.putNumber("Odometer", driveTrain.distanceCounter.get());
         
-        SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.get());
+        SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getDistance());
         
         SmartDashboard.putNumber("TargetRPM", shooter.targetRPM); 
     }
