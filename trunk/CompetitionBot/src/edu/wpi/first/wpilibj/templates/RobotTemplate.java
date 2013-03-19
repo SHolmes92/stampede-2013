@@ -232,5 +232,7 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("Odometer", driveTrain.distanceCounter.get());
         
         SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.get());
+        
+        SmartDashboard.putNumber("TargetRPM", shooter.targetRPM); 
     }
 }
