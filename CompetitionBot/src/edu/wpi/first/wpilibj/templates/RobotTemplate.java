@@ -44,7 +44,11 @@ public class RobotTemplate extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
-
+        
+        autoShots = autoPrefs.getInt("autoShotCount", 3);
+        autoBackTime = autoPrefs.getDouble("autoBackTime", 0);
+        autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40);
+        autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
         // create all objects
         shooter = new Shooter();
         driveTrain = new DriveTrain();
@@ -58,7 +62,8 @@ public class RobotTemplate extends IterativeRobot {
         deck.init();
         winch.init();
 
-
+        
+        
         leftStick = new Joystick(1);
         rightStick = new Joystick(2);
         gamepad = new Joystick(3);
@@ -144,10 +149,7 @@ public class RobotTemplate extends IterativeRobot {
         autoTimer.start();
         autoState = 0;
 
-        autoShots = autoPrefs.getInt("autoShotCount", 3);
-        autoBackTime = autoPrefs.getDouble("autoBackTime", 0);
-        autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40);
-        autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
+       
 
         deck.autonomousInit();
 
