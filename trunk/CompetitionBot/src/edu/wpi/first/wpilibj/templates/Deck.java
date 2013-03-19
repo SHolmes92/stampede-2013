@@ -89,10 +89,10 @@ public class Deck {
                 deckBottomRequest = false;
             }
         } else if (targetAngle != 0) {
-            if (deckAngle > (targetAngle + 0.5)) {
+            if (deckAngle > (targetAngle + 2)) {
                 // move down
                 angulatorPower = -1;
-            } else if (deckAngle < (targetAngle - 0.5)) {
+            } else if (deckAngle < (targetAngle - 2)) {
                 // move up
                 angulatorPower = 1;
             } else {
