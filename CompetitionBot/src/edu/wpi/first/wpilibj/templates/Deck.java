@@ -63,9 +63,9 @@ public class Deck {
 
         //handle angle reading 
         if (!lowerLimit.get()) {
-            deckAngleOffset = deckDownAngle - angleEncoder.get();
+            deckAngleOffset = deckDownAngle - angleEncoder.getDistance();
         } else if (!upperLimit.get()) {
-            deckAngleOffset = deckUpAngle - angleEncoder.get();
+            deckAngleOffset = deckUpAngle - angleEncoder.getDistance();
         }
         deckAngle = angleEncoder.getDistance() + deckAngleOffset;
 

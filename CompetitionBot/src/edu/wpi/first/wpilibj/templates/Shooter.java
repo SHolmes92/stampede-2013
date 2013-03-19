@@ -36,6 +36,7 @@ public class Shooter {
         shooterCounter = new Counter(shooterWheelSensor);
         shooterCounter.start();
         targetRPM = 0;
+        actualPower = 0; 
         shooterTimer = new Timer();
         shooterTimer.start();
         shooterTalon = new Talon(6);
@@ -54,6 +55,7 @@ public class Shooter {
             shooterCounter.reset();
             shooterTimer.reset();
         }
+        shooterTalon.set(actualPower); 
     }
 
     public void ui() {

@@ -124,6 +124,18 @@ public class RobotTemplate extends IterativeRobot {
         shooter.ui();
         launcher.ui();
         // winch.ui(); 
+        
+        if(leftStick.getRawButton(2)){ 
+            //loading configuration 
+            deck.moveToBottom();
+            shooter.setTargetRPM(0);
+        }
+        else if(leftStick.getRawButton(3)){
+            //shooting configuration 
+            deck.moveToAngle(45);
+            shooter.setTargetRPM(1500);
+        }
+        
     }
 
     

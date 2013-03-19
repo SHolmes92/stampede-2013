@@ -103,10 +103,13 @@ public class DriveTrain {
 
     public void ui() {
 
+        
         x = leftStick.getX();
         y = leftStick.getY();
         r = rightStick.getX();
 
+        
+        
         double gyroAngle = gyro.getAngle();
         double time = Timer.getFPGATimestamp();
 
