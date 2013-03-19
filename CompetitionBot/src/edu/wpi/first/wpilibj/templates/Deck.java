@@ -51,6 +51,14 @@ public class Deck {
 
     }
 
+    public void teleopInit(){
+        targetAngle = 0; 
+    }
+    
+    public void autonomousInit(){
+        targetAngle = 0; 
+    }
+    
     public void handler() {
 
         //handle angle reading 
@@ -81,14 +89,16 @@ public class Deck {
                 deckBottomRequest = false;
             }
         } else if (targetAngle != 0) {
-            if (deckAngle > (targetAngle - 1)) {
+            if (deckAngle > (targetAngle + 0.5)) {
                 // move down
                 angulatorPower = -1;
-            } else if (deckAngle < (targetAngle + 1)) {
+            } else if (deckAngle < (targetAngle - 0.5)) {
                 // move up
                 angulatorPower = 1;
             } else {
+                // target angle reached - stop following!
                 angulatorPower = 0;
+                targetAngle = 0;
             }
         } else {
             angulatorPower = 0;

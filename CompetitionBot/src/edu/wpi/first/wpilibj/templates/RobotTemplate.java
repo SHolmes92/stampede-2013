@@ -107,6 +107,8 @@ public class RobotTemplate extends IterativeRobot {
     public void teleopInit() {
         driveTrain.teleopInit();
         launcher.teleopInit();
+        deck.teleopInit();
+       
 
     }
 
@@ -133,6 +135,7 @@ public class RobotTemplate extends IterativeRobot {
         autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
         autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40); 
         autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200); 
+        deck.autonomousInit();
         
         
     }
