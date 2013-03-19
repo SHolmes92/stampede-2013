@@ -65,7 +65,7 @@ public class RobotTemplate extends IterativeRobot {
         gamepad = new Joystick(3);
 
         //intialize deck controls 
-        deck.joystick = leftStick;
+        deck.joystick = rightStick;
         deck.raiseDeckButton = 3;
         deck.lowerDeckButton = 2;
         deck.shootingPositionButton = 4;
