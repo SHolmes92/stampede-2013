@@ -139,10 +139,14 @@ public class Deck {
 
     void moveToTop() {
         deckTopRequest = true;
+        deckBottomRequest = false; 
+        targetAngle = 0; 
     }
 
     void moveToBottom() {
         deckBottomRequest = true;
+        deckTopRequest = false; 
+        targetAngle = 0; 
     }
 
     void moveToAngle(double a) {
