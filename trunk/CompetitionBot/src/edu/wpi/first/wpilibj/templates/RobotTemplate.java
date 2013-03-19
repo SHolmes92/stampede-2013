@@ -143,18 +143,15 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
-        /*
-         autoShots = autoPrefs.getInt("autoShotCount", 3);
-         autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
-         autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40); 
-         autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200); 
-         */
+
+        autoShots = autoPrefs.getInt("autoShotCount", 3);
+        autoBackTime = autoPrefs.getDouble("autoBackTime", 0);
+        autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40);
+        autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
+
         deck.autonomousInit();
 
-        autoShots = 3;
-        autoBackTime = 0;
-        autoShotAngle = 40;
-        autoShotRPM = 1200;
+
 
 
     }
