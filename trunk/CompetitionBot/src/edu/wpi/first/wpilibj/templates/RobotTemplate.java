@@ -37,14 +37,28 @@ public class RobotTemplate extends IterativeRobot {
     double autoBackTime;
     double autoShotAngle;
     double autoShotRPM;
+    double autoBackSpeed; 
+    double autoShotDelay; 
     Preferences autoPrefs;
 
     /**
      * This function is run when the robot is first started up and should be
-     * used for any initialization code.
+     * used for any initialization code 
      */
     public void robotInit() {
-      
+       if(true){ 
+           autoPrefs = Preferences.getInstance();
+           
+           autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
+           autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
+           autoShots = autoPrefs.getInt("autoShots", 3); 
+           autoShotAngle = autoPrefs.getDouble("autoAngle", 40); 
+           autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); 
+           autoShotDelay = autoPrefs.getDouble("autoShotDelay", 2); 
+       }
+         
+        
+        
       
         // create all objects
         shooter = new Shooter();
@@ -145,8 +159,7 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
-       
-        autoShots = 3; 
+      
 
         deck.autonomousInit();
     }
@@ -167,14 +180,14 @@ public class RobotTemplate extends IterativeRobot {
         switch (autoState) {
             case 0: // raise deck, spin up
                 deck.moveToTop();
-                shooter.setTargetRPM(1200);
+                shooter.setTargetRPM(autoShotRPM);
                 autoState++;
                 
                 break;
 
             case 1: // check if deck up, go to target angle
                 if (deck.isAtTop()) {
-                    deck.moveToAngle(40);
+                    deck.moveToAngle(autoShotAngle);
                     autoState++;
                 }
                 break;
@@ -186,7 +199,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
 
             case 3: // make sure some min. time has transpired
-                if (t >= 3) {
+                if (t >= 1) {
                     autoState++;
                     autoTimer.reset();
                 }
@@ -194,11 +207,11 @@ public class RobotTemplate extends IterativeRobot {
 
             case 4: // shoot every 2 seconds, 3 times
                 if (autoShots > 0) {
-                    if (t >= 2) {
+                    if (t >= autoShotDelay) {
                         launcher.fire();
                         autoTimer.reset();
                         autoShots--;
-                        System.out.print("Firing");
+                        
                     }
                     
                 } else {
@@ -208,13 +221,13 @@ public class RobotTemplate extends IterativeRobot {
 
             case 5: // back out
                 // drive backwards slowly
-                driveTrain.drive(0, -0.4, 0);
+                driveTrain.drive(0, autoBackSpeed, 0);
                 autoTimer.reset();
                 autoState++;
                 break;
 
             case 6:
-                if (t > 3) {
+                if (t > autoBackTime) {
                     // stop
                     driveTrain.drive(0, 0, 0);
                     autoState++;
