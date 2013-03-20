@@ -294,6 +294,7 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getDistance());
         SmartDashboard.putNumber("TargetRPM", shooter.targetRPM);       
         SmartDashboard.putNumber("State", autoState);       
-        SmartDashboard.putNumber("AutoTimer", autoTimer.get());     
+        SmartDashboard.putNumber("AutoTimer", autoTimer.get());  
+        SmartDashboard.putNumber("Gyro Angle", driveTrain.gyroAngle);
     }
 }
