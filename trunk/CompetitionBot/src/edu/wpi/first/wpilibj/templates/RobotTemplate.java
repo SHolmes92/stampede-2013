@@ -152,6 +152,7 @@ public class RobotTemplate extends IterativeRobot {
         launcher.teleopInit();
         deck.teleopInit();
         winch.teleopInit();
+        shooter.setTargetRPM(0); 
     }
 
     public void teleopPeriodic() {
