@@ -38,7 +38,10 @@ public class RobotTemplate extends IterativeRobot {
     int autoShots;
     int shotCounter;
     double autoShotAngle, autoShotRPM, autoShotDelay;
-    double autoBackHeading, autoBackSpeed, autoBackTime, autoBackAngle, autoBackRotation;
+    double autoBackHeading, autoBackSpeed, 
+            autoBackTime1, autoBackAngle1, 
+            autoBackTime2, autoBackAngle2, 
+            autoBackRotation;
     boolean shotFired;
     
     Preferences autoPrefs;
@@ -65,8 +68,10 @@ public class RobotTemplate extends IterativeRobot {
 
            autoBackHeading = autoPrefs.getDouble("autoBackHeading", 0); // heading when shooting
            autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); // power
-           autoBackTime = autoPrefs.getDouble("autoBackTime", 0);   // seconds
-           autoBackAngle = autoPrefs.getDouble("autoBackAngle", 145); // degrees
+          autoBackTime1 = autoPrefs.getDouble("autoBackTime1", 0);   // seconds
+           autoBackTime2 = autoPrefs.getDouble("autoBackTime2", 0);   // seconds
+           autoBackAngle1 = autoPrefs.getDouble("autoBackAngle1", 140); // degrees
+           autoBackAngle2 = autoPrefs.getDouble("autoBackAngle2", 175); // degrees
            autoBackRotation = autoPrefs.getDouble("autoBackRotation", 0.3); // power
 
            winch.winchInSpeed = autoPrefs.getDouble("winchInSpeed", -0.3); // power
@@ -124,7 +129,7 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void disabledInit() {
-        if(true){ 
+        if(false){ 
            autoPrefs = Preferences.getInstance();
            
            autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
@@ -134,18 +139,19 @@ public class RobotTemplate extends IterativeRobot {
 
            autoBackHeading = autoPrefs.getDouble("autoBackHeading", 0); // heading when shooting
            autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); // power
-           autoBackTime = autoPrefs.getDouble("autoBackTime", 0);   // seconds
-           autoBackAngle = autoPrefs.getDouble("autoBackAngle", 145); // degrees
+           autoBackAngle1 = autoPrefs.getDouble("autoBackAngle1", 145); // degrees
            autoBackRotation = autoPrefs.getDouble("autoBackRotation", 0.3); // power
 
            winch.winchInSpeed = autoPrefs.getDouble("winchInSpeed", -0.3); // power
            winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
        }
+        deck.moveToTop();
     }
 
     // called periodically during disabled
     public void disabledPeriodic() {
-    }
+       deck.handler();
+   }
 
     public void teleopInit() {
         driveTrain.teleopInit();
@@ -260,13 +266,34 @@ public class RobotTemplate extends IterativeRobot {
                 break;
 
             case 6:
-                if (t < autoBackTime) {
+                if (t < autoBackTime1) {
                     // yes - keep calling this so gyro angle is calculated properly!
                     
                     // turn around while backing out
                     double rotation;
                     
-                    if(driveTrain.gyroAngle < autoBackAngle) {
+                    if(driveTrain.gyroAngle < autoBackAngle1) {
+                        rotation = autoBackRotation;
+                    }
+                    else {
+                        rotation = 0;
+                    }
+                    driveTrain.drive(0, autoBackSpeed, rotation);
+                }
+                else {
+                    autoTimer.reset();
+                    autoState++;
+                }
+                break;
+                
+            case 7:
+                if (t < autoBackTime2) {
+                    // yes - keep calling this so gyro angle is calculated properly!
+                    
+                    // turn around while backing out
+                    double rotation;
+                    
+                    if(driveTrain.gyroAngle < autoBackAngle2) {
                         rotation = autoBackRotation;
                     }
                     else {
@@ -280,7 +307,6 @@ public class RobotTemplate extends IterativeRobot {
                     autoState++;
                 }
                 break;
-
             default:
                 break;
         }
