@@ -46,7 +46,14 @@ public class RobotTemplate extends IterativeRobot {
      * used for any initialization code 
      */
     public void robotInit() {
-       if(true){ 
+       // create all objects
+        shooter = new Shooter();
+        driveTrain = new DriveTrain();
+        launcher = new Launcher();
+        deck = new Deck();
+        winch = new Winch();
+        
+        if(true){ 
            autoPrefs = Preferences.getInstance();
            
            autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
@@ -64,12 +71,7 @@ public class RobotTemplate extends IterativeRobot {
            winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
        }
    
-        // create all objects
-        shooter = new Shooter();
-        driveTrain = new DriveTrain();
-        launcher = new Launcher();
-        deck = new Deck();
-        winch = new Winch();
+        
 
         // init all objects
         shooter.init();
