@@ -44,12 +44,7 @@ public class RobotTemplate extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
-        autoPrefs = Preferences.getInstance(); 
-         
-        autoShots = autoPrefs.getInt("autoShotCount", 3);
-        autoBackTime = autoPrefs.getDouble("autoBackTime", 0);
-        autoShotAngle = autoPrefs.getDouble("autoShotAngle", 40);
-        autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
+      
       
         // create all objects
         shooter = new Shooter();
@@ -150,6 +145,7 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
+       
         autoShots = 3; 
 
         deck.autonomousInit();
@@ -164,14 +160,15 @@ public class RobotTemplate extends IterativeRobot {
         winch.handler();
 
         //handle sequencing 
-        double t = autoTimer.get();
+        double t;
+        t = autoTimer.get();
 
         switch (autoState) {
             case 0: // raise deck, spin up
                 deck.moveToTop();
                 shooter.setTargetRPM(1200);
                 autoState++;
-                System.out.print("State 1");
+                
                 break;
 
             case 1: // check if deck up, go to target angle
@@ -242,5 +239,10 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getDistance());
 
         SmartDashboard.putNumber("TargetRPM", shooter.targetRPM);
+        
+        SmartDashboard.putNumber("State", autoState);
+        
+        SmartDashboard.putNumber("AutoTimer", autoTimer.get()); 
+        
     }
 }
