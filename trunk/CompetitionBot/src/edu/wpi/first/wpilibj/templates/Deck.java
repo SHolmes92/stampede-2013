@@ -134,7 +134,8 @@ public class Deck {
     }
 
     boolean isAtTargetAngle() {
-        return (Math.abs(targetAngle - deckAngle) <= 1);
+        return ((Math.abs(targetAngle - deckAngle) <= 1) || targetAngle == 0);
+        
     }
 
     void moveToTop() {
