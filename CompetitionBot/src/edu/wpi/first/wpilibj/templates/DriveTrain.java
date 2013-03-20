@@ -195,6 +195,6 @@ public class DriveTrain {
     }
     
     public void drive(double x, double y, double r){
-        drive.mecanumDrive_Cartesian(x, y, r, gyroAngle);
+        drive.mecanumDrive_Cartesian(x, -y, r, gyroAngle);
     }
 }
