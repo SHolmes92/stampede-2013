@@ -40,8 +40,11 @@ public class DriveTrain {
     double x = 0;   // side motion
     double r = 0;
     Gyro gyro;
+    double gyroAngle;
+    double gyroOffset;
     Joystick leftStick;
     Joystick rightStick;
+    double time; 
     int approachButton,
             gyroLockButton;
 
@@ -49,7 +52,8 @@ public class DriveTrain {
         drive = new RobotDrive(1, 2, 3, 4);
         gyro = new Gyro(1);
 
-
+      
+        
         distanceCounter = new Counter(2, 5); 
         distanceCounter.start(); 
         distanceCounter.reset(); 
@@ -74,8 +78,7 @@ public class DriveTrain {
         leftSonar = new Ultrasonic(3, 4);
 
         // start the gyro
-        gyro.reset();
-        gyro.setSensitivity(1.647 * 0.001);  // VEX gyro sensitivity (in mv/deg/sec)
+        gyroInit();
 
         // start the sonar
         leftSonar.setAutomaticMode(true);
@@ -94,25 +97,20 @@ public class DriveTrain {
     }
 
     public void handler() {
+        // handle gyro
+        gyroHandler();
+        
         //handle sonar readings 
         sonarDistance = ((rightSonar.getRangeInches() + leftSonar.getRangeInches()) / 2);
         sonarDifference = rightSonar.getRangeInches() - leftSonar.getRangeInches();
-
-
+        
     }
 
     public void ui() {
-
-        
         x = leftStick.getX();
         y = leftStick.getY();
         r = rightStick.getX();
-
         
-        
-        double gyroAngle = gyro.getAngle();
-        double time = Timer.getFPGATimestamp();
-
         if (false) {
             if (leftStick.getRawButton(gyroLockButton)) {
                 // lock the heading
@@ -178,18 +176,18 @@ public class DriveTrain {
 
     public void gyroInit() {
         gyro.reset();
-        gyroLastRdg = gyro.getAngle();
-        gyroLastTime = Timer.getFPGATimestamp();
-        gyroDrift = 0;
+        gyro.setSensitivity(1.647 * 0.001);  // VEX gyro sensitivity (in mv/deg/sec)
+        gyroOffset = 0;
+        gyroAngle = gyro.getAngle();
     }
 
     public void gyroHandler() {
-        // we should start reading the gyro here to correct for any drift
-        // take a drift reading based on the last 5 seconds (MAY ADJUST!!!)
-        double dt = Timer.getFPGATimestamp() - gyroLastTime;
-        if (dt >= 10) {
-            gyroLastTime = Timer.getFPGATimestamp();
-        }
+        gyroAngle = gyro.getAngle() + gyroOffset;
+    }
+
+    // set gyro's current reading 
+    public void gyroSet(double a) {
+        gyroOffset = a - gyro.getAngle();
     }
 
     public void teleopInit() {
@@ -197,6 +195,6 @@ public class DriveTrain {
     }
     
     public void drive(double x, double y, double r){
-        drive.mecanumDrive_Cartesian(x, y, r, 0.0);
+        drive.mecanumDrive_Cartesian(x, y, r, gyroAngle);
     }
 }

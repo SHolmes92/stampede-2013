@@ -14,10 +14,20 @@ import edu.wpi.first.wpilibj.Talon;
  */
 public class Winch {
 
-    Talon w1;
-    Talon w2;
-    Encoder rightWinchEncoder;
-    Encoder leftWinchEncoder;
+    private Talon w1;
+    private Talon w2;
+    private Encoder rightWinchEncoder;
+    private Encoder leftWinchEncoder;
+    
+    boolean winchActive;    // safety flag
+    
+    int 
+            leftWinchOutButton, leftWinchInButton,
+            rightWinchOutButton, rightWinchInButton,
+            winchActivateButton1, winchActivateButton2;
+    
+    double winchInSpeed, winchOutSpeed;
+    
     Joystick gamepad;
 
     public void init() {
@@ -27,21 +37,41 @@ public class Winch {
         w2 = new Talon(7);
         rightWinchEncoder.start();
         leftWinchEncoder.start();
-
-
+        
+        winchActive = false;
+    }
+    
+    public void teleopInit()
+    {
+        winchActive = false;
     }
 
     public void handler() {
+        // check safety!
+        if(!winchActive) return;
     }
 
     public void ui() {
-        if (gamepad.getRawButton(1)) {
-            w1.set(gamepad.getY() * 0.6);
+        // activation (safety)
+        if(gamepad.getRawButton(winchActivateButton1) && gamepad.getRawButton(winchActivateButton1)){
+            winchActive = true;
+        }
+        // check safety!
+        if(!winchActive) return;
+        
+     
+        if(gamepad.getRawButton(leftWinchOutButton)) {
+            w1.set(winchOutSpeed);
+        } else if(gamepad.getRawButton(leftWinchInButton)) {
+            w1.set(winchInSpeed);
         } else {
             w1.stopMotor();
         }
-        if (gamepad.getRawButton(3)) {
-            w2.set(gamepad.getY() * 0.6);
+
+        if(gamepad.getRawButton(rightWinchOutButton)) {
+            w2.set(winchOutSpeed);
+        } else if(gamepad.getRawButton(rightWinchInButton)) {
+            w2.set(winchInSpeed);
         } else {
             w2.stopMotor();
         }

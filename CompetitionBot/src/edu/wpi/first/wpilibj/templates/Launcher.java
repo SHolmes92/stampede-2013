@@ -41,9 +41,7 @@ public class Launcher {
     boolean goodShot;
     boolean fireRequest;    // firing requested by autonomous
     Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer;
-    int fireButton,
-            rePushButton,
-            reTapButton;
+    int fireButton, safetyButton, rePushButton, reTapButton;
 
     public void init() {
         hopper = new Talon(8);
@@ -196,13 +194,20 @@ public class Launcher {
                 pusherOut();
             }
         } else {
-            // idle - withdraw servo
-            pusherOut();
-
-            // if disc in slot 0 and have room - turn
-
+            // idle - handle pusher-tapper overrides, otherwise just withdraw
+            if(joystick.getRawButton(reTapButton)){
+                tapperUp();
+            }
+            else {
+                tapperDown();
+            }
+            if(joystick.getRawButton(rePushButton)){
+                pusherIn();
+            }
+            else {
+                pusherOut();
+            }
         }
-
     }
 
     public void ui() {
