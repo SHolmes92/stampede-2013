@@ -178,7 +178,7 @@ public class DriveTrain {
         gyro.reset();
         gyro.setSensitivity(1.647 * 0.001);  // VEX gyro sensitivity (in mv/deg/sec)
         gyroOffset = 0;
-        gyroAngle = gyro.getAngle();
+        gyroAngle = -gyro.getAngle();
     }
 
     public void gyroHandler() {
@@ -187,7 +187,7 @@ public class DriveTrain {
 
     // set gyro's current reading 
     public void gyroSet(double a) {
-        gyroOffset = a - -gyro.getAngle();
+        gyroOffset = a - (-gyro.getAngle());
     }
 
     public void teleopInit() {
