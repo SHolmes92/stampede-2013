@@ -150,14 +150,9 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
-
-        //autoShots = 3; 
+        autoShots = 3; 
 
         deck.autonomousInit();
-
-
-
-
     }
 
     public void autonomousPeriodic() {
@@ -176,6 +171,7 @@ public class RobotTemplate extends IterativeRobot {
                 deck.moveToTop();
                 shooter.setTargetRPM(1200);
                 autoState++;
+                System.out.print("State 1");
                 break;
 
             case 1: // check if deck up, go to target angle

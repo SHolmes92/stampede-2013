@@ -216,6 +216,17 @@ public class Launcher {
         launcherSlots[2] = true;
         launcherSlots[3] = true;
 
+        launcherTurning = false;
+        launcherSettling = false;
+        launcherShooting = false;
+        launcherLoading = false;
+        launcherPausing = false;
+        launcherPastMark = false;
+        discInFeeder = launcherSlots[0];
+        fresbeeDetected = false;
+        LightRelay.set(Relay.Value.kOn);
+        pusherOut();
+        tapperDown();
     }
 
     public void teleopInit() {
@@ -235,8 +246,6 @@ public class Launcher {
         LightRelay.set(Relay.Value.kOn);
         pusherOut();
         tapperDown();
-
-
     }
 
     public void startTurning() {
