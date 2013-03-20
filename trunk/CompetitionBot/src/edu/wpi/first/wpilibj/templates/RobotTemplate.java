@@ -158,6 +158,7 @@ public class RobotTemplate extends IterativeRobot {
         shooter.handler();
         launcher.handler();
         winch.handler();
+        displayHandler();
 
         //handle sequencing 
         double t;
