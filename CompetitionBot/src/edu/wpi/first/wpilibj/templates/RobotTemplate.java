@@ -39,6 +39,7 @@ public class RobotTemplate extends IterativeRobot {
     int shotCounter;
     double autoShotAngle, autoShotRPM, autoShotDelay;
     double autoBackHeading, autoBackSpeed, autoBackTime, autoBackAngle, autoBackRotation;
+    boolean shotFired;
     
     Preferences autoPrefs;
 
@@ -227,15 +228,20 @@ public class RobotTemplate extends IterativeRobot {
                 if (t >= 1) {
                     autoState++;
                     autoTimer.reset();
+                    shotFired = false;
                 }
                 break;
 
             case 4: // shoot every 2 seconds, 3 times
                 if (shotCounter > 0) {
-                    if (t >= autoShotDelay) {
+                    if(!shotFired){
                         launcher.fire();
+                        shotFired = true;
+                    }
+                    if (t >= autoShotDelay) {
                         autoTimer.reset();
                         shotCounter--;
+                        shotFired = false;
                     }
                 } else {
                     autoState++;
