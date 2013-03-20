@@ -36,6 +36,7 @@ public class RobotTemplate extends IterativeRobot {
     Timer autoTimer;
     int autoState;
     int autoShots;
+    int shotCounter;
     double autoShotAngle, autoShotRPM, autoShotDelay;
     double autoBackHeading, autoBackSpeed, autoBackTime, autoBackAngle, autoBackRotation;
     
@@ -71,8 +72,6 @@ public class RobotTemplate extends IterativeRobot {
            winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
        }
    
-        
-
         // init all objects
         shooter.init();
         driveTrain.init();
@@ -124,6 +123,23 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void disabledInit() {
+        if(true){ 
+           autoPrefs = Preferences.getInstance();
+           
+           autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
+           autoShots = autoPrefs.getInt("autoShots", 3); 
+           autoShotAngle = autoPrefs.getDouble("autoAngle", 40); 
+           autoShotDelay = autoPrefs.getDouble("autoShotDelay", 2); 
+
+           autoBackHeading = autoPrefs.getDouble("autoBackHeading", 0); // heading when shooting
+           autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); // power
+           autoBackTime = autoPrefs.getDouble("autoBackTime", 0);   // seconds
+           autoBackAngle = autoPrefs.getDouble("autoBackAngle", 145); // degrees
+           autoBackRotation = autoPrefs.getDouble("autoBackRotation", 0.3); // power
+
+           winch.winchInSpeed = autoPrefs.getDouble("winchInSpeed", -0.3); // power
+           winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
+       }
     }
 
     // called periodically during disabled
@@ -170,6 +186,7 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
+        shotCounter = autoShots;
         deck.autonomousInit();
     }
 
@@ -214,14 +231,12 @@ public class RobotTemplate extends IterativeRobot {
                 break;
 
             case 4: // shoot every 2 seconds, 3 times
-                if (autoShots > 0) {
+                if (shotCounter > 0) {
                     if (t >= autoShotDelay) {
                         launcher.fire();
                         autoTimer.reset();
-                        autoShots--;
-                        
+                        shotCounter--;
                     }
-                    
                 } else {
                     autoState++;
                 }

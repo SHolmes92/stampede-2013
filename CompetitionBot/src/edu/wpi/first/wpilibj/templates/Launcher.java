@@ -43,6 +43,7 @@ public class Launcher {
     Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer;
     int fireButton, safetyButton, rePushButton, reTapButton;
 
+
     public void init() {
         hopper = new Talon(8);
         pusher = new Servo(9);
@@ -230,6 +231,7 @@ public class Launcher {
         discInFeeder = launcherSlots[0];
         fresbeeDetected = false;
         LightRelay.set(Relay.Value.kOn);
+        
         pusherOut();
         tapperDown();
     }
