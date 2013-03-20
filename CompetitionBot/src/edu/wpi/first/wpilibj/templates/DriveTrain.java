@@ -182,12 +182,12 @@ public class DriveTrain {
     }
 
     public void gyroHandler() {
-        gyroAngle = gyro.getAngle() + gyroOffset;
+        gyroAngle = -gyro.getAngle() + gyroOffset;
     }
 
     // set gyro's current reading 
     public void gyroSet(double a) {
-        gyroOffset = a - gyro.getAngle();
+        gyroOffset = a - -gyro.getAngle();
     }
 
     public void teleopInit() {
