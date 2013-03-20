@@ -31,14 +31,14 @@ public class RobotTemplate extends IterativeRobot {
     Joystick leftStick;
     Joystick rightStick;
     Joystick gamepad;
+    
+    // autonomous handler variables
     Timer autoTimer;
     int autoState;
     int autoShots;
-    double autoBackTime;
-    double autoShotAngle;
-    double autoShotRPM;
-    double autoBackSpeed; 
-    double autoShotDelay; 
+    double autoShotAngle, autoShotRPM, autoShotDelay;
+    double autoBackHeading, autoBackSpeed, autoBackTime, autoBackAngle, autoBackRotation;
+    
     Preferences autoPrefs;
 
     /**
@@ -50,16 +50,20 @@ public class RobotTemplate extends IterativeRobot {
            autoPrefs = Preferences.getInstance();
            
            autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
-           autoBackTime = autoPrefs.getDouble("autoBackTime", 0); 
            autoShots = autoPrefs.getInt("autoShots", 3); 
            autoShotAngle = autoPrefs.getDouble("autoAngle", 40); 
-           autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); 
            autoShotDelay = autoPrefs.getDouble("autoShotDelay", 2); 
+
+           autoBackHeading = autoPrefs.getDouble("autoBackHeading", 0); // heading when shooting
+           autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); // power
+           autoBackTime = autoPrefs.getDouble("autoBackTime", 0);   // seconds
+           autoBackAngle = autoPrefs.getDouble("autoBackAngle", 145); // degrees
+           autoBackRotation = autoPrefs.getDouble("autoBackRotation", 0.3); // power
+
+           winch.winchInSpeed = autoPrefs.getDouble("winchInSpeed", -0.3); // power
+           winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
        }
-         
-        
-        
-      
+   
         // create all objects
         shooter = new Shooter();
         driveTrain = new DriveTrain();
@@ -67,14 +71,14 @@ public class RobotTemplate extends IterativeRobot {
         deck = new Deck();
         winch = new Winch();
 
+        // init all objects
         shooter.init();
         driveTrain.init();
         launcher.init();
         deck.init();
         winch.init();
 
-        
-        
+        // create UI elements
         leftStick = new Joystick(1);
         rightStick = new Joystick(2);
         gamepad = new Joystick(3);
@@ -98,17 +102,23 @@ public class RobotTemplate extends IterativeRobot {
         driveTrain.gyroLockButton = 1;
 
         //intialize winch controls 
-        winch.gamepad = gamepad;
+        winch.gamepad = leftStick;
+        
+        winch.leftWinchOutButton = 6;
+        winch.leftWinchInButton = 7;
+        winch.rightWinchOutButton = 11;
+        winch.rightWinchInButton = 10;
+        winch.winchActivateButton1 = 8;
+        winch.winchActivateButton2 = 9;      
 
         //intialize launcher controls 
         launcher.joystick = rightStick;
         launcher.fireButton = 1;
+        launcher.safetyButton = 8;
         launcher.rePushButton = 7;
         launcher.reTapButton = 6;
 
         autoTimer = new Timer();
-
-
     }
 
     public void disabledInit() {
@@ -122,8 +132,7 @@ public class RobotTemplate extends IterativeRobot {
         driveTrain.teleopInit();
         launcher.teleopInit();
         deck.teleopInit();
-
-
+        winch.teleopInit();
     }
 
     public void teleopPeriodic() {
@@ -139,7 +148,7 @@ public class RobotTemplate extends IterativeRobot {
         deck.ui();
         shooter.ui();
         launcher.ui();
-        // winch.ui(); 
+        winch.ui(); 
 
         if (leftStick.getRawButton(2)) {
             //loading configuration 
@@ -159,8 +168,6 @@ public class RobotTemplate extends IterativeRobot {
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
-      
-
         deck.autonomousInit();
     }
 
@@ -182,7 +189,6 @@ public class RobotTemplate extends IterativeRobot {
                 deck.moveToTop();
                 shooter.setTargetRPM(autoShotRPM);
                 autoState++;
-                
                 break;
 
             case 1: // check if deck up, go to target angle
@@ -221,13 +227,30 @@ public class RobotTemplate extends IterativeRobot {
 
             case 5: // back out
                 // drive backwards slowly
-                driveTrain.drive(0, autoBackSpeed, 0);
+                // tell the robot which way it's heading (0 being the field axis away from driver station)
+                //(so we back out straight towards the driver station!)
+                driveTrain.gyroSet(autoBackHeading);  
+               
                 autoTimer.reset();
                 autoState++;
                 break;
 
             case 6:
-                if (t > autoBackTime) {
+                if (t < autoBackTime) {
+                    // yes - keep calling this so gyro angle is calculated properly!
+                    
+                    // turn around while backing out
+                    double rotation;
+                    
+                    if(driveTrain.gyroAngle < autoBackAngle) {
+                        rotation = autoBackRotation;
+                    }
+                    else {
+                        rotation = 0;
+                    }
+                    driveTrain.drive(0, autoBackSpeed, rotation);
+                }
+                else {
                     // stop
                     driveTrain.drive(0, 0, 0);
                     autoState++;
@@ -241,22 +264,13 @@ public class RobotTemplate extends IterativeRobot {
 
     public void displayHandler() {
         SmartDashboard.putNumber("ActualRPM", shooter.shooterRPM);
-
         SmartDashboard.putNumber("ActualPower", shooter.actualPower);
-
         SmartDashboard.putNumber("Angle Encoder(Degrees", deck.deckAngle);
-
         SmartDashboard.putNumber("Sonar Distance", driveTrain.sonarDistance);
-
         SmartDashboard.putNumber("Odometer", driveTrain.distanceCounter.get());
-
         SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getDistance());
-
-        SmartDashboard.putNumber("TargetRPM", shooter.targetRPM);
-        
-        SmartDashboard.putNumber("State", autoState);
-        
-        SmartDashboard.putNumber("AutoTimer", autoTimer.get()); 
-        
+        SmartDashboard.putNumber("TargetRPM", shooter.targetRPM);       
+        SmartDashboard.putNumber("State", autoState);       
+        SmartDashboard.putNumber("AutoTimer", autoTimer.get());     
     }
 }
