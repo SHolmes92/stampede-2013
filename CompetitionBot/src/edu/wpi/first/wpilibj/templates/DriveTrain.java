@@ -45,15 +45,16 @@ public class DriveTrain {
     Joystick leftStick;
     Joystick rightStick;
     double time; 
-    int approachButton,
-            gyroLockButton;
+    int approachButton, gyroLockButton;
+    
+    double obstacleDistance;    // inches
+    double obstacleHeading;     // + = on the right, - = on th left
 
     public void init() {
         drive = new RobotDrive(1, 2, 3, 4);
         gyro = new Gyro(1);
-
+        obstacleDistance = 100;
       
-        
         distanceCounter = new Counter(2, 5); 
         distanceCounter.start(); 
         distanceCounter.reset(); 
@@ -100,10 +101,7 @@ public class DriveTrain {
         // handle gyro
         gyroHandler();
         
-        //handle sonar readings 
-        sonarDistance = ((rightSonar.getRangeInches() + leftSonar.getRangeInches()) / 2);
-        sonarDifference = rightSonar.getRangeInches() - leftSonar.getRangeInches();
-        
+       sonarHandler();
     }
 
     public void ui() {
@@ -188,6 +186,20 @@ public class DriveTrain {
     // set gyro's current reading 
     public void gyroSet(double a) {
         gyroOffset = a - (-gyro.getAngle());
+    }
+    
+    private void sonarHandler(){
+        double left, right;
+        
+        left = leftSonar.getRangeInches();
+        right = rightSonar.getRangeInches();
+        
+        //handle sonar readings 
+        sonarDistance = (left + right) / 2;
+        sonarDifference = right - left;
+        
+        obstacleDistance = Math.min(left, right);
+        obstacleHeading = ((left / right) - 1.0) * 90;
     }
 
     public void teleopInit() {
