@@ -68,7 +68,7 @@ public class RobotTemplate extends IterativeRobot {
 
            autoBackHeading = autoPrefs.getDouble("autoBackHeading", 0); // heading when shooting
            autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); // power
-          autoBackTime1 = autoPrefs.getDouble("autoBackTime1", 0);   // seconds
+           autoBackTime1 = autoPrefs.getDouble("autoBackTime1", 0);   // seconds
            autoBackTime2 = autoPrefs.getDouble("autoBackTime2", 0);   // seconds
            autoBackAngle1 = autoPrefs.getDouble("autoBackAngle1", 140); // degrees
            autoBackAngle2 = autoPrefs.getDouble("autoBackAngle2", 175); // degrees
@@ -252,6 +252,8 @@ public class RobotTemplate extends IterativeRobot {
                     }
                 } else {
                     autoState++;
+                    shooter.setTargetRPM(0);
+                    deck.moveToBottom();
                 }
                 break;
 
@@ -266,6 +268,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
 
             case 6:
+                // back out and turn for autoBackTime1 seconds
                 if (t < autoBackTime1) {
                     // yes - keep calling this so gyro angle is calculated properly!
                     
@@ -281,25 +284,41 @@ public class RobotTemplate extends IterativeRobot {
                     driveTrain.drive(0, autoBackSpeed, rotation);
                 }
                 else {
+                    // reset heading to current direction so sonar-based slides in x dimension make sense
+                    driveTrain.gyroSet(0); 
+                    // this is now straight, speed is now positive!
+                    driveTrain.drive(0, -autoBackSpeed, 0);
                     autoTimer.reset();
                     autoState++;
                 }
                 break;
                 
             case 7:
+                // keep driving with sonar obstacle avoidance
                 if (t < autoBackTime2) {
                     // yes - keep calling this so gyro angle is calculated properly!
                     
                     // turn around while backing out
-                    double rotation;
+                    double slide = 0;
+                    double speed = -autoBackSpeed;
                     
-                    if(driveTrain.gyroAngle < autoBackAngle2) {
-                        rotation = autoBackRotation;
+                    if(driveTrain.obstacleDistance > 40){
+                        // keep going straight
+                        slide = 0;
+                    }
+                    else if(driveTrain.obstacleDistance  > 24){
+                        // slide over gently
+                        slide = (driveTrain.obstacleDistance > 0)?(-0.2):0.2;
+                    }
+                    if(driveTrain.obstacleDistance  > 12){
+                        // slide over aggressively
+                        slide = (driveTrain.obstacleDistance > 0)?(-0.6):0.6;
                     }
                     else {
-                        rotation = 0;
+                        // within a foot - stop
+                        speed = 0;
                     }
-                    driveTrain.drive(0, autoBackSpeed, rotation);
+                    driveTrain.drive(slide, speed, 0);
                 }
                 else {
                     // stop
@@ -307,6 +326,7 @@ public class RobotTemplate extends IterativeRobot {
                     autoState++;
                 }
                 break;
+                
             default:
                 break;
         }
