@@ -44,7 +44,7 @@ public class Shooter {
 
     public void handler() {
 
-        predictedPower = targetRPM * (0.4 / 1400.0);
+        predictedPower = targetRPM * (1.0 / 1500.0);
         RPMError = targetRPM - shooterRPM;
         double powerCorrection;
         powerCorrection = (RPMError * (0.4 / 1400.0)) * 1;
@@ -55,7 +55,8 @@ public class Shooter {
             shooterCounter.reset();
             shooterTimer.reset();
         }
-        shooterTalon.set(actualPower); 
+        //shooterTalon.set(actualPower); 
+        shooterTalon.set(predictedPower); 
     }
 
     public void ui() {
