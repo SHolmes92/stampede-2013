@@ -193,6 +193,8 @@ public class Launcher {
                 launcherPausing = false;
                 launcherSlots[3] = false;    // disc out!
                 pusherOut();
+                // load next - remove this if we don't want to load right after shot!
+                launcherLoading = true;
             }
         } else {
             // idle - handle pusher-tapper overrides, otherwise just withdraw
