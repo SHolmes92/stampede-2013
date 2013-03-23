@@ -36,8 +36,8 @@ public class Deck {
             targetAngle;
     private static final double deckUpAngle = 61;
     private static final double deckDownAngle = 9;
-    private static final double shootingPositionAngle = 24;
-    private static final double towerPositionAngle = 24;
+    private static final double shootingPositionAngle = 21.6;
+    private static final double towerPositionAngle = 23.2;
 
     public void init() {
         deckAngle = 0;
