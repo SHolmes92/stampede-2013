@@ -29,7 +29,10 @@ public class Shooter {
     Joystick joystick;
     Talon shooterTalon;
     int increaseRPMButton,
-            decreaseRPMButton;
+            decreaseRPMButton,
+            offButton, 
+            shootingRPMButton, 
+            towerShootingRPMButton; 
 
     public void init() {
         shooterWheelSensor = new DigitalInput(5);
@@ -87,6 +90,16 @@ public class Shooter {
             }
         }
         lastDecreaseButton = button;
+        
+        if(joystick.getRawButton(offButton)){
+            targetRPM = 0; 
+        }
+        if(joystick.getRawButton(shootingRPMButton)){
+            targetRPM = 1800; 
+        }
+        if(joystick.getRawButton(towerShootingRPMButton)){
+            targetRPM = 1800; 
+        }
 
     }
 

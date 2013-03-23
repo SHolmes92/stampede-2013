@@ -44,8 +44,9 @@ public class DriveTrain {
     double gyroOffset;
     Joystick leftStick;
     Joystick rightStick;
+    Joystick gamepad; 
     double time; 
-    int approachButton, gyroLockButton;
+    int approachButton, gyroLockButton, shooterRotationButton; 
     
     double obstacleDistance;    // inches
     double obstacleHeading;     // + = on the right, - = on th left
@@ -108,6 +109,13 @@ public class DriveTrain {
         x = leftStick.getX();
         y = leftStick.getY();
         r = rightStick.getX();
+        
+        // give weapons officer control of rotation of the bot 
+        if(gamepad.getRawButton(shooterRotationButton)){
+            r = gamepad.getX()*0.75; 
+            x = 0; 
+            y = 0; 
+        }
         
         if (false) {
             if (leftStick.getRawButton(gyroLockButton)) {

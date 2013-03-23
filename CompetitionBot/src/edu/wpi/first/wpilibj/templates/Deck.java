@@ -19,7 +19,9 @@ public class Deck {
     int raiseDeckButton,
             lowerDeckButton,
             shootingPositionButton,
-            towerPositionButton;
+            towerPositionButton, 
+            deckTopButton, 
+            deckBottomButton; 
     Talon angulator;
     double lastDeckAngle;
     DigitalInput lowerLimit;
@@ -116,7 +118,15 @@ public class Deck {
         if (joystick.getRawButton(towerPositionButton)) {
             targetAngle = towerPositionAngle;
         }
-
+        
+        if(joystick.getRawButton(deckTopButton)){ 
+            deckTopRequest = true; 
+        }
+        
+        if(joystick.getRawButton(deckBottomButton)){ 
+            deckBottomRequest = true; 
+        }
+            
         // move down wins
         if (moveDown) {
             moveUp = false;
@@ -127,6 +137,7 @@ public class Deck {
             deckBottomRequest = false;
             targetAngle = 0;
         }
+        
     }
 
     boolean isAtTop() {
