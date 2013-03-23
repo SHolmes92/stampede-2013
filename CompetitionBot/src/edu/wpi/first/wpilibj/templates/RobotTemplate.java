@@ -111,10 +111,11 @@ public class RobotTemplate extends IterativeRobot {
         //intialize drive train controls
         driveTrain.rightStick = rightStick;
         driveTrain.leftStick = leftStick;
+        driveTrain.gamepad = gamepad; 
         driveTrain.approachButton = 4;
         driveTrain.gyroLockButton = 1;
-        driveTrain.shooterRotationButton = 11; //12? 
-
+        driveTrain.shooterRotationButton = 11; 
+        
         //intialize winch controls 
         winch.gamepad = leftStick;
 

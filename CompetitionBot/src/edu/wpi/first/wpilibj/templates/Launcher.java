@@ -98,6 +98,10 @@ public class Launcher {
                 fresbeeDetected = true;
                 feederTimer.reset();
                 feederTimer.start();
+                // 4th frisbee detection
+                if(getDiscCount() == 4){
+                    fullFlag = true;
+                }
             } else {
                 if (!discInFeeder && feederTimer.get() > 0.25) {
                     feederTimer.stop();
@@ -166,10 +170,6 @@ public class Launcher {
             if (settlingTimer.get() > 0.3) {
                 settlingTimer.stop();
                 launcherSettling = false;
-                if(getDiscCount() == 4){
-                    fullFlag = true;
-                }
-
             }
         } else if (launcherLoading) {
             // turn if disc available but not in the chamber
