@@ -43,6 +43,8 @@ public class Launcher {
     Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer;
     int fireButton, safetyButton, rePushButton, reTapButton;
 
+    // loading event trigger flags
+    boolean emptyFlag, fullFlag;
 
     public void init() {
         hopper = new Talon(8);
@@ -78,6 +80,7 @@ public class Launcher {
         load = false;
         trigger = false;
         fireRequest = false;
+        
 
     }
 
@@ -163,6 +166,10 @@ public class Launcher {
             if (settlingTimer.get() > 0.3) {
                 settlingTimer.stop();
                 launcherSettling = false;
+                if(getDiscCount() == 4){
+                    fullFlag = true;
+                }
+
             }
         } else if (launcherLoading) {
             // turn if disc available but not in the chamber
@@ -195,6 +202,9 @@ public class Launcher {
                 pusherOut();
                 // load next - remove this if we don't want to load right after shot!
                 launcherLoading = true;
+                if(getDiscCount() == 0){
+                    emptyFlag = true;
+                }
             }
         } else {
             // idle - handle pusher-tapper overrides, otherwise just withdraw
@@ -243,6 +253,9 @@ public class Launcher {
         launcherSlots[1] = false;
         launcherSlots[2] = false;
         launcherSlots[3] = false;
+        
+        emptyFlag = false;
+        fullFlag = false;
 
         launcherTurning = false;
         launcherSettling = false;
@@ -290,8 +303,12 @@ public class Launcher {
 
     public void reTap() {
     }
-    
+
     public void fire(){
         fireRequest = true;
+    }
+
+    public int getDiscCount(){
+        return (((launcherSlots[0])?1:0) + ((launcherSlots[1])?1:0) + ((launcherSlots[2])?1:0) + ((launcherSlots[3])?1:0));
     }
 }

@@ -182,17 +182,20 @@ public class RobotTemplate extends IterativeRobot {
         shooter.ui();
         launcher.ui();
         winch.ui(); 
-
-        if (leftStick.getRawButton(2)) {
-            //loading configuration 
-            deck.moveToBottom();
+        
+        // automated shooter/deck action
+        if(launcher.emptyFlag){
+            // empty - stop/lower
             shooter.setTargetRPM(0);
-        } else if (leftStick.getRawButton(3)) {
-            //shooting configuration 
-            deck.moveToAngle(45);
-            shooter.setTargetRPM(1500);
+            deck.moveToBottom();
+            launcher.emptyFlag = false;
         }
-
+        if(launcher.fullFlag){
+            // full - start/raise
+            shooter.setTargetRPM(1700);
+            deck.moveToAngle(22);
+            launcher.fullFlag = false;
+        }
     }
 
     public void autonomousInit() {
@@ -319,7 +322,7 @@ public class RobotTemplate extends IterativeRobot {
                     }
                     if(driveTrain.obstacleDistance  > 12){
                         // slide over aggressively
-                        slide = (driveTrain.obstacleDistance > 0)?(-0.6):0.6;
+                        slide = (driveTrain.obstacleDistance > 0)?(-0.4):0.4;
                     }
                     else {
                         // within a foot - stop
