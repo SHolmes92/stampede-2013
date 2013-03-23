@@ -99,7 +99,7 @@ public class Launcher {
                 feederTimer.reset();
                 feederTimer.start();
                 // 4th frisbee detection
-                if(getDiscCount() == 4){
+                if(getDiscCount() == 3){
                     fullFlag = true;
                 }
             } else {

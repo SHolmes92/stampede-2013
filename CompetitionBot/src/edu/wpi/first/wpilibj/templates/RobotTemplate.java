@@ -283,22 +283,14 @@ public class RobotTemplate extends IterativeRobot {
                 if (t < autoBackTime1) {
                     // yes - keep calling this so gyro angle is calculated properly!
                     
-                    // turn around while backing out
-                    double rotation;
-                    
                     if(driveTrain.gyroAngle < autoBackAngle1) {
-                        rotation = autoBackRotation;
+                        driveTrain.drive(0, autoBackSpeed, autoBackRotation);
                     }
                     else {
-                        rotation = 0;
+                        driveTrain.drive(0, autoBackSpeed, 0);
                     }
-                    driveTrain.drive(0, autoBackSpeed, rotation);
                 }
                 else {
-                    // reset heading to current direction so sonar-based slides in x dimension make sense
-                    driveTrain.gyroSet(0); 
-                    // this is now straight, speed is now positive!
-                    driveTrain.drive(0, -autoBackSpeed, 0);
                     autoTimer.reset();
                     autoState++;
                 }
@@ -329,6 +321,8 @@ public class RobotTemplate extends IterativeRobot {
                         // within a foot - stop
                         speed = 0;
                     }
+                    // reset gyro (to keep driving straight!)
+                    driveTrain.gyroSet(0); 
                     driveTrain.drive(slide, speed, 0);
                 }
                 else {
