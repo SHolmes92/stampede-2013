@@ -343,5 +343,8 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("State", autoState);       
         SmartDashboard.putNumber("AutoTimer", autoTimer.get());  
         SmartDashboard.putNumber("Gyro Angle", driveTrain.gyroAngle);
+        SmartDashboard.putNumber("LeftSonar", driveTrain.leftSonar.getRangeInches());
+        SmartDashboard.putNumber("RightSonar", driveTrain.rightSonar.getRangeInches());
+        
     }
 }
