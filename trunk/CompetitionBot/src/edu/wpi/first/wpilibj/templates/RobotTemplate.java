@@ -91,17 +91,16 @@ public class RobotTemplate extends IterativeRobot {
         gamepad = new Joystick(3);
 
         //intialize deck controls 
-        deck.joystick = rightStick;
-        deck.raiseDeckButton = 3;
-        deck.lowerDeckButton = 2;
-        deck.shootingPositionButton = 4;
-        deck.towerPositionButton = 5;
+        deck.joystick = gamepad;
+        deck.raiseDeckButton = 5; 
+        deck.lowerDeckButton = 7;
+        deck.shootingPositionButton = 1;
+        deck.towerPositionButton = 4; 
 
-        //intilize shooter controls 
-        shooter.joystick = rightStick;
-        shooter.increaseRPMButton = 11;
-        shooter.decreaseRPMButton = 10;
-
+        //intilize shooter controls  
+        shooter.joystick = gamepad;
+        shooter.increaseRPMButton = 6; 
+        shooter.decreaseRPMButton = 8;
         //intialize drive train controls
         driveTrain.rightStick = rightStick;
         driveTrain.leftStick = leftStick;
@@ -110,7 +109,7 @@ public class RobotTemplate extends IterativeRobot {
 
         //intialize winch controls 
         winch.gamepad = leftStick;
-        
+
         winch.leftWinchOutButton = 6;
         winch.leftWinchInButton = 7;
         winch.rightWinchOutButton = 11;
@@ -119,11 +118,11 @@ public class RobotTemplate extends IterativeRobot {
         winch.winchActivateButton2 = 9;      
 
         //intialize launcher controls 
-        launcher.joystick = rightStick;
-        launcher.fireButton = 1;
-        launcher.safetyButton = 8;
-        launcher.rePushButton = 7;
-        launcher.reTapButton = 6;
+        launcher.joystick = gamepad;
+        launcher.fireButton = 3;
+        launcher.safetyButton = 2;
+        launcher.rePushButton = 9; 
+        launcher.reTapButton = 10;
 
         autoTimer = new Timer();
     }
