@@ -112,7 +112,7 @@ public class DriveTrain {
         
         // give weapons officer control of rotation of the bot 
         if(gamepad.getRawButton(shooterRotationButton)){
-            r = gamepad.getX()*0.4; 
+            r = gamepad.getX()*0.2; 
             x = 0; 
             y = 0; 
         }

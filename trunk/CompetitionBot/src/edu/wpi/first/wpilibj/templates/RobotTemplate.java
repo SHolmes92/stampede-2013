@@ -152,7 +152,7 @@ public class RobotTemplate extends IterativeRobot {
            winch.winchInSpeed = autoPrefs.getDouble("winchInSpeed", -0.3); // power
            winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
        }
-        deck.moveToTop();
+        //deck.moveToTop();
     }
 
     // called periodically during disabled
