@@ -92,20 +92,28 @@ public class RobotTemplate extends IterativeRobot {
 
         //intialize deck controls 
         deck.joystick = gamepad;
-        deck.raiseDeckButton = 5; 
-        deck.lowerDeckButton = 7;
+        deck.raiseDeckButton = 6; 
+        deck.lowerDeckButton = 8;
         deck.shootingPositionButton = 1;
-        deck.towerPositionButton = 4; 
+        deck.towerPositionButton = 3;
+        deck.deckTopButton = 4; 
+        deck.deckBottomButton = 2; 
+        
 
         //intilize shooter controls  
         shooter.joystick = gamepad;
-        shooter.increaseRPMButton = 6; 
-        shooter.decreaseRPMButton = 8;
+        shooter.increaseRPMButton = 9; 
+        //shooter.decreaseRPMButton = 8;
+        shooter.shootingRPMButton = 1; 
+        shooter.offButton = 2; 
+        shooter.towerShootingRPMButton = 3; 
+        
         //intialize drive train controls
         driveTrain.rightStick = rightStick;
         driveTrain.leftStick = leftStick;
         driveTrain.approachButton = 4;
         driveTrain.gyroLockButton = 1;
+        driveTrain.shooterRotationButton = 11; //12? 
 
         //intialize winch controls 
         winch.gamepad = leftStick;
@@ -119,10 +127,10 @@ public class RobotTemplate extends IterativeRobot {
 
         //intialize launcher controls 
         launcher.joystick = gamepad;
-        launcher.fireButton = 3;
-        launcher.safetyButton = 2;
-        launcher.rePushButton = 9; 
-        launcher.reTapButton = 10;
+        launcher.fireButton = 10;
+        launcher.safetyButton = 10;
+        launcher.reTapButton = 5; 
+        launcher.rePushButton = 7;
 
         autoTimer = new Timer();
     }
@@ -343,7 +351,9 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("AutoTimer", autoTimer.get());  
         SmartDashboard.putNumber("Gyro Angle", driveTrain.gyroAngle);
         SmartDashboard.putNumber("LeftSonar", driveTrain.leftSonar.getRangeInches());
-        SmartDashboard.putNumber("RightSonar", driveTrain.rightSonar.getRangeInches());
+        SmartDashboard.putNumber("RightSonar", driveTrain.rightSonar.getRangeInches()); 
+        SmartDashboard.putBoolean("GamePadButton 11", gamepad.getRawButton(11));
+        SmartDashboard.putBoolean("GamePadButton 12", gamepad.getRawButton(12)); 
         
     }
 }
