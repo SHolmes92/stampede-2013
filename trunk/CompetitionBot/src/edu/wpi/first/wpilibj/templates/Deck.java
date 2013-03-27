@@ -31,6 +31,7 @@ public class Deck {
             moveDown,
             deckTopRequest,
             deckBottomRequest;
+    private boolean offsetSet;
     public double deckAngle,
             deckAngleOffset,
             targetAngle;
@@ -42,15 +43,15 @@ public class Deck {
     public void init() {
         deckAngle = 0;
         deckAngleOffset = 0;
-        targetAngle = 0;
+        targetAngle = 0; 
+        offsetSet = false;
 
         angulator = new Talon(2, 1);
         lowerLimit = new DigitalInput(2, 2);
         upperLimit = new DigitalInput(2, 1);
-        angleEncoder = new Encoder(2, 3, 2, 4);
+        angleEncoder = new Encoder(2, 3, 2, 4, false, Encoder.EncodingType.k4X);
         angleEncoder.start();
         angleEncoder.setDistancePerPulse(-41.0 / 26.0 * 4);
-
     }
 
     public void teleopInit(){
@@ -65,8 +66,10 @@ public class Deck {
 
         //handle angle reading 
         if (!lowerLimit.get()) {
-            deckAngleOffset = deckDownAngle - angleEncoder.getDistance();
-        } else if (!upperLimit.get()) {
+            // deckAngleOffset = deckDownAngle - angleEncoder.getDistance();
+        } else if (!upperLimit.get() && !offsetSet) {
+            // tripped top switch for the first time - record angle offset
+            offsetSet = true; 
             deckAngleOffset = deckUpAngle - angleEncoder.getDistance();
         }
         deckAngle = angleEncoder.getDistance() + deckAngleOffset;
@@ -91,10 +94,10 @@ public class Deck {
                 deckBottomRequest = false;
             }
         } else if (targetAngle != 0) {
-            if (deckAngle > (targetAngle + 2)) {
+            if (deckAngle > (targetAngle + 1)) {
                 // move down
                 angulatorPower = -1;
-            } else if (deckAngle < (targetAngle - 2)) {
+            } else if (deckAngle < (targetAngle - 1)) {
                 // move up
                 angulatorPower = 1;
             } else {
