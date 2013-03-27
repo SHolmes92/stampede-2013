@@ -37,6 +37,8 @@ public class Shooter {
     public void init() {
         shooterWheelSensor = new DigitalInput(5);
         shooterCounter = new Counter(shooterWheelSensor);
+        shooterCounter.setMaxPeriod(1.0); // min - 60 RPM (period = 1 sec)
+        shooterCounter.setUpSourceEdge(false, true);
         shooterCounter.start();
         targetRPM = 0;
         actualPower = 0; 
@@ -47,19 +49,29 @@ public class Shooter {
 
     public void handler() {
 
-        predictedPower = targetRPM * (1.0 / 1500.0);
+        predictedPower = targetRPM * (1.0 / 1700.0);
         RPMError = targetRPM - shooterRPM;
         double powerCorrection;
-        powerCorrection = (RPMError * (0.4 / 1400.0)) * 1;
+        powerCorrection = (RPMError * (1.0 / 1700.0)) * 5;
         actualPower = predictedPower + powerCorrection;
 
-        if (shooterTimer.get() > 0.75) {
-            shooterRPM = (shooterCounter.get() / 4.0 * 60.0 / 0.75);
-            shooterCounter.reset();
-            shooterTimer.reset();
+        if(shooterCounter.getStopped()){
+            shooterRPM = 0;
         }
-        //shooterTalon.set(actualPower); 
-        shooterTalon.set(predictedPower); 
+        else {
+            double p = shooterCounter.getPeriod();
+            // filter out occasional glitches
+            if(p > 0.010){
+                shooterRPM = 60 / p;
+            }
+        }
+        if(targetRPM > 0){
+            shooterTalon.set(actualPower); 
+        }
+        else {
+            shooterTalon.set(0); 
+        }
+        // shooterTalon.set(predictedPower); 
     }
 
     public void ui() {
@@ -71,8 +83,8 @@ public class Shooter {
             // push detection
             if (lastIncreaseButton == false) {
                 targetRPM = targetRPM + 100;
-                if (targetRPM > 1500) {
-                    targetRPM = 1500;
+                if (targetRPM > 1800) {
+                    targetRPM = 1800;
                 }
             }
         }

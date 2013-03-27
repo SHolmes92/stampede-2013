@@ -281,7 +281,7 @@ public class Launcher {
     }
 
     private void tapperDown() {
-        tapper.set(0.64);
+        tapper.set(0.60);
     }
 
     private void pusherOut() {

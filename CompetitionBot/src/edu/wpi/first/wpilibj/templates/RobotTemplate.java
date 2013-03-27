@@ -197,6 +197,9 @@ public class RobotTemplate extends IterativeRobot {
             deck.moveToAngle(22);
             launcher.fullFlag = false;
         }
+        if(rightStick.getRawButton(11)){
+            shooter.setTargetRPM(0);
+        }
     }
 
     public void autonomousInit() {
@@ -341,10 +344,15 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("ActualRPM", shooter.shooterRPM);
         SmartDashboard.putNumber("ActualPower", shooter.actualPower);
         SmartDashboard.putNumber("Angle Encoder(Degrees", deck.deckAngle);
+        
+        SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getRaw());
+        
+        
         SmartDashboard.putNumber("Sonar Distance", driveTrain.sonarDistance);
         SmartDashboard.putNumber("Odometer", driveTrain.distanceCounter.get());
         SmartDashboard.putNumber("RawEncoder", deck.angleEncoder.getDistance());
         SmartDashboard.putNumber("TargetRPM", shooter.targetRPM);       
+        SmartDashboard.putNumber("Period", shooter.shooterCounter.getPeriod());       
         SmartDashboard.putNumber("State", autoState);       
         SmartDashboard.putNumber("AutoTimer", autoTimer.get());  
         SmartDashboard.putNumber("Gyro Angle", driveTrain.gyroAngle);
