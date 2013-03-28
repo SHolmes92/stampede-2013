@@ -39,6 +39,7 @@ public class Launcher {
     boolean discInFeeder;
     boolean fresbeeDetected;
     boolean goodShot;
+    boolean fresbeeDetectorActive;
     boolean fireRequest;    // firing requested by autonomous
     Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer;
     int fireButton, safetyButton, rePushButton, reTapButton;
@@ -52,6 +53,7 @@ public class Launcher {
         tapper = new Servo(10);
         pusherOut();
         tapperUp();
+        fresbeeDetectorActive = true;
         fresbeeSensor = new DigitalInput(7);
         mixerSensor = new DigitalInput(6);
         LightRelay = new Relay(2, 1, Relay.Direction.kForward);
@@ -93,20 +95,23 @@ public class Launcher {
         }
 
         // handle disc detector
-        if (fresbeeSensor.get()) {
-            if (!fresbeeDetected) {
-                fresbeeDetected = true;
-                feederTimer.reset();
-                feederTimer.start();
-                // 4th frisbee detection
-                if(getDiscCount() == 3){
-                    fullFlag = true;
-                }
-            } else {
-                if (!discInFeeder && feederTimer.get() > 0.25) {
-                    feederTimer.stop();
+        if(fresbeeSensor.get()) {
+            // make sure this is a real signal, not tower!
+            if(fresbeeDetectorActive){
+                if (!fresbeeDetected) {
+                    fresbeeDetected = true;
                     feederTimer.reset();
-                    discInFeeder = true;
+                    feederTimer.start();
+                    // 4th frisbee detection
+                    if(getDiscCount() == 3){
+                        fullFlag = true;
+                    }
+                } else {
+                    if (!discInFeeder && feederTimer.get() > 0.25) {
+                        feederTimer.stop();
+                        feederTimer.reset();
+                        discInFeeder = true;
+                    }
                 }
             }
         } else {
