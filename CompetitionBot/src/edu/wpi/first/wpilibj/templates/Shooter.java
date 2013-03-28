@@ -49,12 +49,6 @@ public class Shooter {
 
     public void handler() {
 
-        predictedPower = targetRPM * (1.0 / 1700.0);
-        RPMError = targetRPM - shooterRPM;
-        double powerCorrection;
-        powerCorrection = (RPMError * (1.0 / 1700.0)) * 5;
-        actualPower = predictedPower + powerCorrection;
-
         if(shooterCounter.getStopped()){
             shooterRPM = 0;
         }
@@ -65,6 +59,22 @@ public class Shooter {
                 shooterRPM = 60 / p;
             }
         }
+        
+        predictedPower = targetRPM * (1.0 / 2000.0);    // shold be too low!
+        RPMError = targetRPM - shooterRPM;
+        double powerCorrection = 0;
+        if(shooterRPM < targetRPM){
+            powerCorrection = 0.4;
+        }
+        else {
+            powerCorrection = 0;
+        }
+        // powerCorrection = (RPMError * (1.0 / 1700.0)) * 5;
+        actualPower = predictedPower + powerCorrection;
+        if(actualPower > 1) {
+            actualPower = 1;
+        }
+
         if(targetRPM > 0){
             shooterTalon.set(actualPower); 
         }
@@ -82,7 +92,7 @@ public class Shooter {
         if (button) {
             // push detection
             if (lastIncreaseButton == false) {
-                targetRPM = targetRPM + 100;
+                targetRPM = 1700;
                 if (targetRPM > 1800) {
                     targetRPM = 1800;
                 }

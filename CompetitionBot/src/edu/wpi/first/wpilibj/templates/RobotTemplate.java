@@ -193,12 +193,22 @@ public class RobotTemplate extends IterativeRobot {
         }
         if(launcher.fullFlag){
             // full - start/raise
-            shooter.setTargetRPM(1700);
-            deck.moveToAngle(22);
+            shooter.setTargetRPM(1600);
+            deck.moveToAngle(35);
             launcher.fullFlag = false;
         }
         if(rightStick.getRawButton(11)){
             shooter.setTargetRPM(0);
+        }
+        
+        // make sure fresbee detector is only active when at dock
+        if(driveTrain.obstacleDistance < 20){
+            // near the wall
+            launcher.fresbeeDetectorActive = true;
+        }
+        else {
+            // free - avoid detection of tower!
+            launcher.fresbeeDetectorActive = false;
         }
     }
 

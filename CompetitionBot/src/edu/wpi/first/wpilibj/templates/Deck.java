@@ -60,6 +60,7 @@ public class Deck {
     
     public void autonomousInit(){
         targetAngle = 0; 
+         offsetSet = false;
     }
     
     public void handler() {
