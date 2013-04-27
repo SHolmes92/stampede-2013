@@ -61,18 +61,18 @@ public class RobotTemplate extends IterativeRobot {
         if(true){ 
            autoPrefs = Preferences.getInstance();
            
-           autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1200);
+           autoShotRPM = autoPrefs.getDouble("autoShotRPM", 1600);
            autoShots = autoPrefs.getInt("autoShots", 3); 
-           autoShotAngle = autoPrefs.getDouble("autoAngle", 40); 
+           autoShotAngle = autoPrefs.getDouble("autoAngle", -4); 
            autoShotDelay = autoPrefs.getDouble("autoShotDelay", 2); 
 
-           autoBackHeading = autoPrefs.getDouble("autoBackHeading", 0); // heading when shooting
-           autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.4); // power
-           autoBackTime1 = autoPrefs.getDouble("autoBackTime1", 0);   // seconds
+           autoBackHeading = autoPrefs.getDouble("autoBackHeading", -10); // heading when shooting
+           autoBackSpeed = autoPrefs.getDouble("autoBackSpeed", -0.3); // power
+           autoBackTime1 = autoPrefs.getDouble("autoBackTime1", 2);   // seconds
            autoBackTime2 = autoPrefs.getDouble("autoBackTime2", 0);   // seconds
-           autoBackAngle1 = autoPrefs.getDouble("autoBackAngle1", 140); // degrees
+           autoBackAngle1 = autoPrefs.getDouble("autoBackAngle1", 155); // degrees
            autoBackAngle2 = autoPrefs.getDouble("autoBackAngle2", 175); // degrees
-           autoBackRotation = autoPrefs.getDouble("autoBackRotation", 0.3); // power
+           autoBackRotation = autoPrefs.getDouble("autoBackRotation", 0.15); // power
 
            winch.winchInSpeed = autoPrefs.getDouble("winchInSpeed", -0.3); // power
            winch.winchOutSpeed = autoPrefs.getDouble("winchOutSpeed", 0.7); // power
@@ -94,19 +94,15 @@ public class RobotTemplate extends IterativeRobot {
         deck.joystick = gamepad;
         deck.raiseDeckButton = 6; 
         deck.lowerDeckButton = 8;
-        deck.shootingPositionButton = 1;
-        deck.towerPositionButton = 3;
-        deck.deckTopButton = 4; 
+        deck.shootingPositionButton = 4;
         deck.deckBottomButton = 2; 
         
-
         //intilize shooter controls  
         shooter.joystick = gamepad;
-        shooter.increaseRPMButton = 9; 
-        //shooter.decreaseRPMButton = 8;
-        shooter.shootingRPMButton = 1; 
+        shooter.increaseRPMButton = 3; 
+        shooter.decreaseRPMButton = 1;
+        shooter.shootingRPMButton = 4; 
         shooter.offButton = 2; 
-        shooter.towerShootingRPMButton = 3; 
         
         //intialize drive train controls
         driveTrain.rightStick = rightStick;
@@ -132,6 +128,7 @@ public class RobotTemplate extends IterativeRobot {
         launcher.safetyButton = 10;
         launcher.reTapButton = 5; 
         launcher.rePushButton = 7;
+        launcher.reShootButton = 9;
 
         autoTimer = new Timer();
     }
@@ -215,6 +212,7 @@ public class RobotTemplate extends IterativeRobot {
     public void autonomousInit() {
         driveTrain.drive.setSafetyEnabled(false);
 
+        
         launcher.autonomousInit();
         autoTimer.start();
         autoState = 0;
@@ -223,7 +221,6 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
-
         driveTrain.handler();
         deck.handler();
         shooter.handler();

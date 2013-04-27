@@ -42,7 +42,7 @@ public class Launcher {
     boolean fresbeeDetectorActive;
     boolean fireRequest;    // firing requested by autonomous
     Timer shotTimer, turnTimer, settlingTimer, feederTimer, autoTimer;
-    int fireButton, safetyButton, rePushButton, reTapButton;
+    int fireButton, safetyButton, rePushButton, reTapButton, reShootButton;
 
     // loading event trigger flags
     boolean emptyFlag, fullFlag;
@@ -92,7 +92,19 @@ public class Launcher {
             launcherLoading = true;
             launcherShooting = true;
             fireRequest = false;
+        } else if((joystick.getRawButton(reShootButton)) && !(launcherShooting || launcherLoading || launcherPausing)) {
+            // override the slot array - preted one is about to be loaded
+            launcherSlots[0] = false;
+            launcherSlots[1] = false;
+            launcherSlots[2] = true;
+            launcherSlots[3] = false;
+            
+            // shoot as if fire button pushed
+            launcherLoading = true;
+            launcherShooting = true;
+            fireRequest = false;
         }
+
 
         // handle disc detector
         if(fresbeeSensor.get()) {
@@ -138,7 +150,7 @@ public class Launcher {
                 tapperUp();
             } else if (turnTimer.get() < 1.0) {
                 // start turning
-                hopper.set(0.75);
+                hopper.set(0.65);
                 turnTimer.stop();
             } else if (turnTimer.get() < 3.0) {
             }
@@ -286,7 +298,7 @@ public class Launcher {
     }
 
     private void tapperDown() {
-        tapper.set(0.60);
+        tapper.set(0.55);
     }
 
     private void pusherOut() {

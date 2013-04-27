@@ -31,7 +31,7 @@ public class Winch {
     Joystick gamepad;
 
     public void init() {
-        rightWinchEncoder = new Encoder(1, 8, 1, 9);
+       rightWinchEncoder = new Encoder(1, 12, 1, 13);
         leftWinchEncoder = new Encoder(1, 10, 1, 11);
         w1 = new Talon(5);
         w2 = new Talon(7);

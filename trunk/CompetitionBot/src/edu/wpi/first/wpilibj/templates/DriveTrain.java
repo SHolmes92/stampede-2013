@@ -76,7 +76,7 @@ public class DriveTrain {
         // note: 2 is input (marked OUTPUT on VEX!!!)
         // note: 3 is output (marked INPUT on VEX!!!) 
         // note: 4 is input (marked OUTPUT on VEX!!!) 
-        rightSonar = new Ultrasonic(1, 2);
+        rightSonar = new Ultrasonic(8, 9);
         leftSonar = new Ultrasonic(3, 4);
 
         // start the gyro
