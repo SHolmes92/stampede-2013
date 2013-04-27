@@ -19,7 +19,6 @@ public class Deck {
     int raiseDeckButton,
             lowerDeckButton,
             shootingPositionButton,
-            towerPositionButton, 
             deckTopButton, 
             deckBottomButton; 
     Talon angulator;
@@ -36,9 +35,9 @@ public class Deck {
             deckAngleOffset,
             targetAngle;
     private static final double deckUpAngle = 61;
-    private static final double deckDownAngle = 9;
-    private static final double shootingPositionAngle = 21.6;
-    private static final double towerPositionAngle = 23.2;
+    private static final double deckDownAngle = -28;
+    private static final double shootingPositionAngle = -4;
+    // private static final double towerPositionAngle = 23.2;
 
     public void init() {
         deckAngle = 0;
@@ -119,10 +118,6 @@ public class Deck {
             targetAngle = shootingPositionAngle;
         }
 
-        if (joystick.getRawButton(towerPositionButton)) {
-            targetAngle = towerPositionAngle;
-        }
-        
         if(joystick.getRawButton(deckTopButton)){ 
             deckTopRequest = true; 
         }

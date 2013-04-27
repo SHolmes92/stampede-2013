@@ -33,7 +33,7 @@ public class Shooter {
             offButton, 
             shootingRPMButton, 
             towerShootingRPMButton; 
-
+   
     public void init() {
         shooterWheelSensor = new DigitalInput(5);
         shooterCounter = new Counter(shooterWheelSensor);
@@ -92,7 +92,7 @@ public class Shooter {
         if (button) {
             // push detection
             if (lastIncreaseButton == false) {
-                targetRPM = 1700;
+                targetRPM = targetRPM + 100;
                 if (targetRPM > 1800) {
                     targetRPM = 1800;
                 }
@@ -119,10 +119,6 @@ public class Shooter {
         if(joystick.getRawButton(shootingRPMButton)){
             targetRPM = 1800; 
         }
-        if(joystick.getRawButton(towerShootingRPMButton)){
-            targetRPM = 1800; 
-        }
-
     }
 
     public void setTargetRPM(double tRPM) {
